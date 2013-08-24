@@ -1,18 +1,21 @@
 package com.snyder.contacts.model;
 
-import java.util.List;
 
 
 /**
- * Extends {@link PersonInfo} with additional contact information
+ * Extends {@link ContactSummary} with additional contact information
  * 
  * @author greg
  */
-public interface Person extends PersonInfo
+public interface Person extends Contact
 {
-    
-    List<PersonAddress> getAddresses();
-    
-    List<PhoneNumber> getPhoneNumbers();
+	
+	Title getTitle();
+	
+	String getFirstName();
+	
+	String getMiddleInitial();
+	
+	String getLastName();
     
 }

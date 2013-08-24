@@ -4,6 +4,7 @@ package com.snyder.contacts.model;
 public class AddressImpl implements Address
 {
 
+    private String addressType;
     private String line1;
     private String line2;
     private String line3;
@@ -20,6 +21,7 @@ public class AddressImpl implements Address
     
     public AddressImpl(Address copy)
     {
+    	this.addressType = copy.getAddressType();
         this.line1 = copy.getLine1();
         this.line2 = copy.getLine2();
         this.line3 = copy.getLine3();
@@ -28,6 +30,16 @@ public class AddressImpl implements Address
         this.postalCode = copy.getPostalCode();
         this.country = copy.getCountry();
         this.additionalInformation = copy.getAdditionalInformation();
+    }
+    
+    public String getAddressType()
+    {
+        return addressType;
+    }
+    
+    public void setAddressType(String addressType)
+    {
+        this.addressType = addressType;
     }
     
     public String getLine1()

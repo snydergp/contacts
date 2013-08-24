@@ -4,6 +4,8 @@ package com.snyder.contacts.model;
 public interface Address
 {
     
+    String getAddressType();
+    
     String getLine1();
     
     String getLine2();

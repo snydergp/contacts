@@ -3,6 +3,7 @@ package com.snyder.contacts.model.modifiable;
 import com.snyder.contacts.model.Address;
 import com.snyder.contacts.model.AddressImpl;
 import com.snyder.contacts.model.validation.AddressValidation;
+import com.snyder.modifiable.LeafModifiable;
 import com.snyder.modifiable.approved.ModificationApprover;
 import com.snyder.modifiable.validation.ValidatedApprovedCompositeModifiable;
 import com.snyder.modifiable.validation.ValidatedApprovedLeafModifiable;
@@ -11,6 +12,7 @@ import com.snyder.modifiable.validation.ValidatedApprovedLeafModifiable;
 public class ModifiableAddress extends ValidatedApprovedCompositeModifiable<Address>
 {
 
+    private final LeafModifiable<String> addressType;
     private final ValidatedApprovedLeafModifiable<String> line1;
     private final ValidatedApprovedLeafModifiable<String> line2;
     private final ValidatedApprovedLeafModifiable<String> line3;
@@ -23,6 +25,7 @@ public class ModifiableAddress extends ValidatedApprovedCompositeModifiable<Addr
     public ModifiableAddress(Address initial, ModificationApprover approver)
     {
         super(initial, approver);
+        addressType = this.buildLeaf(initial.getAddressType());
         line1 = this.buildLeaf(initial.getLine1(), AddressValidation.LINE_1);
         line2 = this.buildLeaf(initial.getLine2(), AddressValidation.LINE_2);
         line3 = this.buildLeaf(initial.getLine3(), AddressValidation.LINE_3);
@@ -38,6 +41,7 @@ public class ModifiableAddress extends ValidatedApprovedCompositeModifiable<Addr
     public Address getModified()
     {
         AddressImpl mod = new AddressImpl(getCurrent());
+        mod.setAddressType(addressType.getModified());
         mod.setLine1(line1.getModified());
         mod.setLine2(line2.getModified());
         mod.setLine3(line3.getModified());
@@ -47,6 +51,11 @@ public class ModifiableAddress extends ValidatedApprovedCompositeModifiable<Addr
         mod.setCountry(country.getModified());
         mod.setAdditionalInformation(additionalInformation.getModified());
         return mod;
+    }
+    
+    public LeafModifiable<String> getAddressType()
+    {
+        return addressType;
     }
 
     public ValidatedApprovedLeafModifiable<String> getLine1()

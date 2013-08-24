@@ -3,8 +3,9 @@ package com.snyder.contacts.model.modifiable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.snyder.contacts.model.Address;
+import com.snyder.contacts.model.EmailAddress;
 import com.snyder.contacts.model.Person;
-import com.snyder.contacts.model.PersonAddress;
 import com.snyder.contacts.model.PersonImpl;
 import com.snyder.contacts.model.PhoneNumber;
 import com.snyder.contacts.model.validation.PersonValidation;
@@ -21,8 +22,9 @@ public class ModifiablePerson extends ValidatedApprovedCompositeModifiable<Perso
     private final LeafModifiable<String> firstName;
     private final LeafModifiable<String> middleInitial;
     private final LeafModifiable<String> lastName;
-    private final ModifiableList<ModifiablePersonAddress> addresses;
+    private final ModifiableList<ModifiableAddress> addresses;
     private final ModifiableList<ModifiablePhoneNumber> phoneNumbers;
+    private final ModifiableList<ModifiableEmailAddress> emailAddresses;
 
     public ModifiablePerson(Person initial, ModificationApprover approver)
     {
@@ -31,13 +33,13 @@ public class ModifiablePerson extends ValidatedApprovedCompositeModifiable<Perso
         middleInitial = this.buildLeaf(initial.getMiddleInitial());
         lastName = this.buildLeaf(initial.getLastName(), PersonValidation.LAST);
         
-        List<ModifiablePersonAddress> modifiableAddresses = 
-            new ArrayList<ModifiablePersonAddress>();
-        for(PersonAddress address: initial.getAddresses())
+        List<ModifiableAddress> modifiableAddresses = 
+            new ArrayList<ModifiableAddress>();
+        for(Address address: initial.getAddresses())
         {
-            modifiableAddresses.add(new ModifiablePersonAddress(address, this));
+            modifiableAddresses.add(new ModifiableAddress(address, this));
         }
-        addresses = new ModifiableList<ModifiablePersonAddress>(modifiableAddresses, this);
+        addresses = new ModifiableList<ModifiableAddress>(modifiableAddresses, this);
         
         List<ModifiablePhoneNumber> modifiableNumbers = new ArrayList<ModifiablePhoneNumber>();
         for(PhoneNumber phoneNumber: initial.getPhoneNumbers())
@@ -45,6 +47,13 @@ public class ModifiablePerson extends ValidatedApprovedCompositeModifiable<Perso
             modifiableNumbers.add(new ModifiablePhoneNumber(phoneNumber, this));
         }
         phoneNumbers = new ModifiableList<ModifiablePhoneNumber>(modifiableNumbers, this);
+        
+        List<ModifiableEmailAddress> modifiableEmails = new ArrayList<ModifiableEmailAddress>();
+        for(EmailAddress email: initial.getEmailAddresses())
+        {
+        	modifiableEmails.add(new ModifiableEmailAddress(email, this));
+        }
+        emailAddresses = new ModifiableList<ModifiableEmailAddress>(modifiableEmails, this);
     }
 
     @Override
@@ -56,7 +65,7 @@ public class ModifiablePerson extends ValidatedApprovedCompositeModifiable<Perso
         mod.setLastName(lastName.getModified());
         
         mod.getAddresses().clear();
-        for(ModifiablePersonAddress modAddress: addresses.getModified())
+        for(ModifiableAddress modAddress: addresses.getModified())
         {
             mod.getAddresses().add(modAddress.getModified());
         }
@@ -85,14 +94,14 @@ public class ModifiablePerson extends ValidatedApprovedCompositeModifiable<Perso
         return lastName;
     }
     
-    public HasListEvents<ModifiablePersonAddress> getAddresses()
+    public HasListEvents<ModifiableAddress> getAddresses()
     {
         return addresses.getModifiedView();
     }
     
-    public ModifiablePersonAddress addAddress()
+    public ModifiableAddress addAddress()
     {
-        ModifiablePersonAddress newAddress = new ModifiablePersonAddress(null, this); // TODO
+        ModifiableAddress newAddress = new ModifiableAddress(null, this); // TODO
         this.addChild(newAddress);
         validator.addChildValidator(newAddress.getValidator());
         addresses.add(newAddress);
@@ -101,7 +110,7 @@ public class ModifiablePerson extends ValidatedApprovedCompositeModifiable<Perso
     
     public void deleteAddress(int index)
     {
-        ModifiablePersonAddress removed = addresses.getModifiedView().getView().get(index);
+        ModifiableAddress removed = addresses.getModifiedView().getView().get(index);
         this.removeChild(removed);
         validator.removeChildValidator(removed.getValidator());
         addresses.remove(index);
@@ -127,6 +136,28 @@ public class ModifiablePerson extends ValidatedApprovedCompositeModifiable<Perso
         this.removeChild(removed);
         validator.removeChildValidator(removed.getValidator());
         phoneNumbers.remove(index);
+    }
+    
+    public HasListEvents<ModifiableEmailAddress> getEmailAddresses()
+    {
+        return emailAddresses.getModifiedView();
+    }
+    
+    public ModifiableEmailAddress addEmailAddress()
+    {
+    	ModifiableEmailAddress newEmail = new ModifiableEmailAddress(null, this); // TODO
+        this.addChild(newEmail);
+        validator.addChildValidator(newEmail.getValidator());
+        emailAddresses.add(newEmail);
+        return newEmail;
+    }
+    
+    public void deleteEmailAddress(int index)
+    {
+    	ModifiableEmailAddress removed = emailAddresses.getModifiedView().getView().get(index);
+        this.removeChild(removed);
+        validator.removeChildValidator(removed.getValidator());
+        emailAddresses.remove(index);
     }
     
 }
