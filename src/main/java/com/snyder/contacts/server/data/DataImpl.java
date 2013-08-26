@@ -28,18 +28,72 @@ public abstract class DataImpl
 		this.dialect = dialect;
 	}
 	
-	protected DSLContext getDSLContext() throws DataException
+	protected TransactionContext getTransactionContext() throws DataException
 	{
-		try 
+		try
+        {
+	        return new TransactionContext();
+        }
+        catch (SQLException e)
+        {
+	        throw new DataException(e);
+        }
+	}
+	
+	protected class TransactionContext
+	{
+		
+		private final Connection connection;
+		private final DSLContext context;
+		
+		public TransactionContext() throws SQLException
+        {
+	        connection = dataSource.getConnection();
+	        connection.setAutoCommit(false);
+	        context = DSL.using(connection, dialect);
+        }
+
+		public DSLContext getContext()
 		{
-			Connection connection = dataSource.getConnection();
-			return DSL.using(connection, dialect);
-		} 
-		catch (SQLException e) 
-		{
-			e.printStackTrace();
-			throw new DataException(e);
+			return context;
 		}
+		
+		public void commit() throws DataException
+		{
+			try
+            {
+	            connection.commit();
+            }
+	        catch (SQLException e)
+	        {
+		        throw new DataException(e);
+	        }
+		}
+		
+		public void rollback() throws DataException
+		{
+			try
+            {
+	            connection.rollback();
+            }
+	        catch (SQLException e)
+	        {
+		        throw new DataException(e);
+	        }
+		}
+		
+		public void close() throws DataException
+		{
+			try
+            {
+	            connection.close();
+            }
+	        catch (SQLException e)
+	        {
+		        throw new DataException(e);
+	        }
+		}
+		
 	}
 	
 }

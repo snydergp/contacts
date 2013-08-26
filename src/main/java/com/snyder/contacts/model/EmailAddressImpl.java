@@ -23,7 +23,7 @@ public class EmailAddressImpl implements EmailAddress
 		this.type = copy.getType();
 		this.email = copy.getEmail();
 	}
-
+	
 	public String getType()
 	{
 		return type;

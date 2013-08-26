@@ -18,6 +18,8 @@ public interface ContactsData
 	
 	int createContact(Contact contact);
 	
+	void updateContact(Contact contact);
+	
 	void deleteContact(int id);
 
 	Contact getContactById(int id);

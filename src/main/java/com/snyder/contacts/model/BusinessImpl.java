@@ -7,7 +7,7 @@ package com.snyder.contacts.model;
  * 
  * @author greg
  */
-public class BusinessImpl extends ContactImpl
+public class BusinessImpl extends ContactImpl implements Business
 {
 
 	private String name;

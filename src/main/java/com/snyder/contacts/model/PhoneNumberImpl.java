@@ -3,7 +3,7 @@ package com.snyder.contacts.model;
 
 public class PhoneNumberImpl implements PhoneNumber
 {
-    
+	
     private String type;
     private String number;
     
@@ -18,7 +18,7 @@ public class PhoneNumberImpl implements PhoneNumber
         this.number = copy.getNumber();
     }
     
-    public String getType()
+	public String getType()
     {
         return type;
     }
