@@ -3,6 +3,7 @@
  */
 package com.snyder.contacts.server.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -13,11 +14,8 @@ import org.jooq.SQLDialect;
 import org.jooq.h2.generated.tables.records.ContactRecord;
 
 import com.snyder.contacts.client.serverinterface.ContactSort;
-import com.snyder.contacts.model.Business;
 import com.snyder.contacts.model.Contact;
 import com.snyder.contacts.model.ContactSummary;
-import com.snyder.contacts.model.Person;
-import com.snyder.contacts.model.PersonImpl;
 
 /**
  * 
@@ -36,21 +34,21 @@ public class ContactsDataImpl extends DataImpl implements ContactsData
 
 	
 	
-	private final PersonData personData;
-	private final BusinessData businessData;
 	private final EmailData emailData;
 	private final PhoneNumberData phoneNumberData;
+	private final List<ContactSubtypeData<?>> contactSubtypeData = 
+	    new ArrayList<ContactSubtypeData<?>>();
 	
 	/**
 	 * @param dataSource
 	 * @param dialect
 	 */
-    public ContactsDataImpl(DataSource dataSource, SQLDialect dialect, PersonData personData, 
-    	BusinessData businessData, EmailData emailData, PhoneNumberData phoneNumberData)
+    public ContactsDataImpl(DataSource dataSource, SQLDialect dialect, 
+        List<ContactSubtypeData<?>> contactSubtypeData, EmailData emailData, 
+        PhoneNumberData phoneNumberData)
     {
 	    super(dataSource, dialect);
-	    this.personData = personData;
-	    this.businessData = businessData;
+	    this.contactSubtypeData.addAll(contactSubtypeData);
 	    this.emailData = emailData;
 	    this.phoneNumberData = phoneNumberData;
     }
@@ -74,15 +72,14 @@ public class ContactsDataImpl extends DataImpl implements ContactsData
 	    
 	    int id = inserted.getContactId();
 	    
-	    if(contact instanceof Person)
+	    // Find the correct ContactSubtypeData interface and insert a subtype record
+	    for(ContactSubtypeData<?> subtypeData: contactSubtypeData)
 	    {
-	    	PersonImpl person = new PersonImpl((Person) contact);
-	    	person.setId(id);
-	    	personData.insertPerson(context, person);
-	    }
-	    else if(contact instanceof Business)
-	    {
-	    	//TODO
+	        if(subtypeData.isSubtypeInstance(contact))
+	        {
+	            subtypeData.insertSubtype(context, contact);
+	            break;
+	        }
 	    }
 	    
 	    emailData.insertEmailAddressesForContactId(context, id, contact.getEmailAddresses());
@@ -151,16 +148,26 @@ public class ContactsDataImpl extends DataImpl implements ContactsData
 		TransactionContext transactionContext = this.getTransactionContext();
 	    DSLContext context = transactionContext.getContext();
 		
-	    //TODO contact fields (join w/ subtype ids to determine type?)
-	    
-		Contact contact = personData.getPerson(context, id);
+	    // This approach requires more queries than is strictly necessary when the correct subtype
+	    // table is not queried first. This could be combined into a single query by joining
+	    // PERSON and BUSINESS to CONTACT and then creating the subtype object corresponding to the
+	    // populated fields. Although this saves an occasionally-wasted query, it is much more
+	    // complex, difficult-to-maintain, and the join comes with its own performance hit. If more
+	    // than 2 subtypes are ever needed, it may be better to have a query that does a ID-only
+	    // join between CONTACT and all subtype tables to determine the actual subtype table to
+	    // query.
+		Contact contact = null;
+		for(ContactSubtypeData<?> subtypeData: contactSubtypeData)
+        {
+            contact = subtypeData.getSubtype(context, id);
+            if(contact != null)
+            {
+                break;
+            }
+        }
 		if(contact == null)
 		{
-			contact = businessData.getBusiness(context, id);
-			if(contact == null)
-			{
-				throw new DataException("No contact subtype found for id " + id);
-			}
+		    return null;
 		}
 		
 		contact.getEmailAddresses().addAll(emailData.getEmailAddressesForContactId(context, id));
@@ -191,26 +198,24 @@ public class ContactsDataImpl extends DataImpl implements ContactsData
 	
 	private void deleteSubtype(DSLContext context, Contact contact)
 	{
-		if(contact instanceof Person)
-		{
-			personData.deletePerson(context, contact.getId());
-		}
-		if(contact instanceof Business)
-		{
-			businessData.deleteBusiness(context, contact.getId());
-		}
+	    for(ContactSubtypeData<?> subtypeData: contactSubtypeData)
+        {
+            if(subtypeData.isSubtypeInstance(contact))
+            {
+                subtypeData.deleteSubtype(context, contact.getId());
+            }
+        }
 	}
 	
 	private void insertSubtype(DSLContext context, Contact contact)
 	{
-		if(contact instanceof Person)
-		{
-			personData.insertPerson(context, (Person) contact);
-		}
-		if(contact instanceof Business)
-		{
-			businessData.insertBusiness(context, (Business) contact);
-		}
+	    for(ContactSubtypeData<?> subtypeData: contactSubtypeData)
+        {
+            if(subtypeData.isSubtypeInstance(contact))
+            {
+                subtypeData.insertSubtype(context, contact);
+            }
+        }
 	}
 	
 }

@@ -5,9 +5,9 @@ package com.snyder.contacts.server.data;
 
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Record;
 import org.jooq.Record5;
 
+import com.snyder.contacts.model.Contact;
 import com.snyder.contacts.model.Person;
 import com.snyder.contacts.model.PersonImpl;
 import com.snyder.contacts.model.Title;
@@ -41,53 +41,59 @@ public class PersonDataImpl implements PersonData
 		return (short) title.ordinal();
 	}
 
-	@Override
-    public void insertPerson(DSLContext context, Person person)
+    @Override
+    public boolean isSubtypeInstance(Contact contact)
     {
-		context.insertInto(PERSON, PERSON_ID, TITLE_CD, FIRST_NAME, MIDDLE_INITIAL, LAST_NAME)
-		.values(person.getId(), 
-			titleToCode(person.getTitle()), 
-			person.getFirstName(), 
-			person.getMiddleInitial(), 
-			person.getLastName())
-		.execute();
+        return contact instanceof Person;
     }
 
-	@Override
-    public Person getPerson(DSLContext context, int contactId)
+    @Override
+    public void insertSubtype(DSLContext context, Contact contact)
     {
-		Record5<Integer, Short, String, String, String> record = 
-			context.select(PERSON_ID, TITLE_CD, FIRST_NAME, MIDDLE_INITIAL, LAST_NAME)
-				.from(PERSON)
-				.where(PERSON_ID.equal(contactId))
-				.fetchAny();
-		
-		if(record == null)
-		{
-			return null;
-		}
-		
-		PersonImpl person = new PersonImpl();
-		person.setId(contactId);
-		//TODO title
-		person.setFirstName(record.getValue(FIRST_NAME));
-		person.setMiddleInitial(record.getValue(MIDDLE_INITIAL));
-		person.setLastName(record.getValue(LAST_NAME));
-		
-		return person;
+        if(!isSubtypeInstance(contact))
+        {
+            throw new IllegalArgumentException();
+        }
+        
+        Person person = (Person) contact;
+        
+        context.insertInto(PERSON, PERSON_ID, TITLE_CD, FIRST_NAME, MIDDLE_INITIAL, LAST_NAME)
+        .values(person.getId(), 
+            titleToCode(person.getTitle()), 
+            person.getFirstName(), 
+            person.getMiddleInitial(), 
+            person.getLastName())
+        .execute();
     }
 
-	@Override
-    public void updatePerson(DSLContext context, Person person)
+    @Override
+    public Person getSubtype(DSLContext context, int contactId)
     {
-	    // TODO Auto-generated method stub
-	    
+        Record5<Integer, Short, String, String, String> record = 
+            context.select(PERSON_ID, TITLE_CD, FIRST_NAME, MIDDLE_INITIAL, LAST_NAME)
+                .from(PERSON)
+                .where(PERSON_ID.equal(contactId))
+                .fetchAny();
+        
+        if(record == null)
+        {
+            return null;
+        }
+        
+        PersonImpl person = new PersonImpl();
+        person.setId(contactId);
+        //TODO title
+        person.setFirstName(record.getValue(FIRST_NAME));
+        person.setMiddleInitial(record.getValue(MIDDLE_INITIAL));
+        person.setLastName(record.getValue(LAST_NAME));
+        
+        return person;
     }
 
-	@Override
-    public void deletePerson(DSLContext context, int contactId)
+    @Override
+    public void deleteSubtype(DSLContext context, int contactId)
     {
-		context.delete(PERSON).where(PERSON_ID.equal(contactId)).execute();
+        context.delete(PERSON).where(PERSON_ID.equal(contactId)).execute();
     }
 
 }
