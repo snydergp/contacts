@@ -11,8 +11,10 @@ package com.snyder.contacts.model;
 public interface ContactSummary
 {
 	
-	long getId();
+	int getId();
 	
 	String getDisplayName();
+	
+	ContactType getType();
 	
 }

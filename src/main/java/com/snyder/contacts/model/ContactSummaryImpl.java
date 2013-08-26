@@ -10,8 +10,9 @@ package com.snyder.contacts.model;
 public class ContactSummaryImpl implements ContactSummary
 {
 	
-	private long id = -1;
+	private int id = -1;
 	private String displayName;
+	private ContactType type;
     
     public ContactSummaryImpl()
     {
@@ -22,14 +23,15 @@ public class ContactSummaryImpl implements ContactSummary
     {
     	this.id = copy.getId();
     	this.displayName = copy.getDisplayName();
+    	this.type = copy.getType();
     }
 
-	public long getId()
+	public int getId()
 	{
 		return id;
 	}
 
-	public void setId(long id)
+	public void setId(int id)
 	{
 		this.id = id;
 	}
@@ -38,10 +40,20 @@ public class ContactSummaryImpl implements ContactSummary
 	{
 		return displayName;
 	}
-
-	public void setName(String displayName)
-	{
-		this.displayName = displayName;
-	}
+    
+    public void setDisplayName(String displayName)
+    {
+        this.displayName = displayName;
+    }
+    
+    public ContactType getType()
+    {
+        return type;
+    }
+    
+    public void setType(ContactType type)
+    {
+        this.type = type;
+    }
 
 }

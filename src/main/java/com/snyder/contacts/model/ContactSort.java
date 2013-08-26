@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.snyder.contacts.client.serverinterface;
+package com.snyder.contacts.model;
 
 /**
  * 

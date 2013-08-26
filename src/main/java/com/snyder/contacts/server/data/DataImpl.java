@@ -40,7 +40,13 @@ public abstract class DataImpl
         }
 	}
 	
-	protected class TransactionContext
+	/**
+	 * Associates a limited subset of connection controls (commit/rollback/close) to the connection
+	 * underlying a given DSLContext instance.
+	 * 
+	 * @author SnyderGP
+	 */
+	protected class TransactionContext //TODO when upgrading to java 7, implement AutoClosable
 	{
 		
 		private final Connection connection;
