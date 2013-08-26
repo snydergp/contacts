@@ -11,7 +11,7 @@ package org.jooq.h2.generated;
 @java.lang.SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ContactsData extends org.jooq.impl.SchemaImpl {
 
-	private static final long serialVersionUID = -81437475;
+	private static final long serialVersionUID = -529710879;
 
 	/**
 	 * The singleton instance of <code>CONTACTS_DATA</code>
@@ -54,6 +54,8 @@ public class ContactsData extends org.jooq.impl.SchemaImpl {
 			org.jooq.h2.generated.tables.Business.BUSINESS,
 			org.jooq.h2.generated.tables.Address.ADDRESS,
 			org.jooq.h2.generated.tables.PhoneNumber.PHONE_NUMBER,
-			org.jooq.h2.generated.tables.Email.EMAIL);
+			org.jooq.h2.generated.tables.Email.EMAIL,
+			org.jooq.h2.generated.tables.NameByFirst.NAME_BY_FIRST,
+			org.jooq.h2.generated.tables.NameByLast.NAME_BY_LAST);
 	}
 }

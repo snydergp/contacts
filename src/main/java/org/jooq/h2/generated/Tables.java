@@ -42,4 +42,14 @@ public class Tables {
 	 * The table CONTACTS_DATA.EMAIL
 	 */
 	public static final org.jooq.h2.generated.tables.Email EMAIL = org.jooq.h2.generated.tables.Email.EMAIL;
+
+	/**
+	 * The table CONTACTS_DATA.NAME_BY_FIRST
+	 */
+	public static final org.jooq.h2.generated.tables.NameByFirst NAME_BY_FIRST = org.jooq.h2.generated.tables.NameByFirst.NAME_BY_FIRST;
+
+	/**
+	 * The table CONTACTS_DATA.NAME_BY_LAST
+	 */
+	public static final org.jooq.h2.generated.tables.NameByLast NAME_BY_LAST = org.jooq.h2.generated.tables.NameByLast.NAME_BY_LAST;
 }
