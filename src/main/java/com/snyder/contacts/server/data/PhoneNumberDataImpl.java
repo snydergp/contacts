@@ -25,14 +25,9 @@ public class PhoneNumberDataImpl
 
 	private static final org.jooq.h2.generated.tables.PhoneNumber PHONE_NUMBER =
 		org.jooq.h2.generated.tables.PhoneNumber.PHONE_NUMBER;
-	private static final Field<Integer> PHONE_NUMBER_ID =
-		org.jooq.h2.generated.tables.PhoneNumber.PHONE_NUMBER.PHONE_NUMBER_ID;
-	private static final Field<Integer> PHONE_CONTACT_ID =
-		org.jooq.h2.generated.tables.PhoneNumber.PHONE_NUMBER.CONTACT_ID;
-	private static final Field<String> PHONE_TYPE =
-		org.jooq.h2.generated.tables.PhoneNumber.PHONE_NUMBER.PHONE_TYPE;
-	private static final Field<String> NUMBER =
-		org.jooq.h2.generated.tables.PhoneNumber.PHONE_NUMBER.NUMBER;
+	private static final Field<Integer> PHONE_CONTACT_ID = PHONE_NUMBER.CONTACT_ID;
+	private static final Field<String> PHONE_TYPE = PHONE_NUMBER.PHONE_TYPE;
+	private static final Field<String> NUMBER = PHONE_NUMBER.NUMBER;
 
 	public List<PhoneNumber> getPhoneNumbersForContact(DSLContext context, int contactId)
 	{

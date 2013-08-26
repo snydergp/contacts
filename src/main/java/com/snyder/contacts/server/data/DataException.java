@@ -6,8 +6,9 @@ package com.snyder.contacts.server.data;
  */
 public class DataException extends RuntimeException
 {
+    private static final long serialVersionUID = 1L;
 
-	public DataException() 
+    public DataException() 
 	{
 		super();
 		// TODO Auto-generated constructor stub

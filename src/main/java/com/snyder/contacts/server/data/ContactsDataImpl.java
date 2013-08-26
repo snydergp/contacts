@@ -42,6 +42,7 @@ public class ContactsDataImpl extends DataImpl implements ContactsData
 	private final ContactSummaryData summaryData;
 	private final EmailData emailData;
 	private final PhoneNumberData phoneNumberData;
+	private final AddressData addressData;
 	
 	/**
 	 * @param dataSource
@@ -50,13 +51,14 @@ public class ContactsDataImpl extends DataImpl implements ContactsData
 	@Inject
     public ContactsDataImpl(DataSource dataSource, SQLDialect dialect,
         List<ContactSubtypeData<?>> contactSubtypeData, ContactSummaryData summaryData, 
-        EmailData emailData, PhoneNumberData phoneNumberData)
+        EmailData emailData, PhoneNumberData phoneNumberData, AddressData addressData)
     {
 	    super(dataSource, dialect);
 	    this.contactSubtypeData.addAll(contactSubtypeData);
 	    this.summaryData = summaryData;
 	    this.emailData = emailData;
 	    this.phoneNumberData = phoneNumberData;
+	    this.addressData = addressData;
     }
 
 	@Override
@@ -93,6 +95,8 @@ public class ContactsDataImpl extends DataImpl implements ContactsData
 	        emailData.insertEmailAddressesForContactId(context, id, contact.getEmailAddresses());
 	        
 	        phoneNumberData.insertPhoneNumbersForContact(context, id, contact.getPhoneNumbers());
+	        
+	        addressData.insertAddressesForContact(context, id, contact.getAddresses());
 	        
 	        // Commit the transaction
 	        transactionContext.commit();
@@ -131,7 +135,8 @@ public class ContactsDataImpl extends DataImpl implements ContactsData
     	    phoneNumberData.insertPhoneNumbersForContact(context, contactId, 
     	        contact.getPhoneNumbers());
     	    
-    	    //TODO addresses
+    	    addressData.clearAddressesForContact(context, contactId);
+    	    addressData.insertAddressesForContact(context, contactId, contact.getAddresses());
     	    
     	    // Commit the transaction
     	    transactionContext.commit();
@@ -203,7 +208,7 @@ public class ContactsDataImpl extends DataImpl implements ContactsData
             contact.getPhoneNumbers().addAll(
                 phoneNumberData.getPhoneNumbersForContact(context, id));
             
-            // TODO addresses
+            contact.getAddresses().addAll(addressData.getAddressesForContact(context, id));
             
             return contact;
 		}

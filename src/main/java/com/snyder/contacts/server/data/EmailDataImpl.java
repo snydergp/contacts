@@ -8,8 +8,10 @@ import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.InsertValuesStep3;
 import org.jooq.Record2;
 import org.jooq.Result;
+import org.jooq.h2.generated.tables.records.EmailRecord;
 
 import com.snyder.contacts.model.EmailAddress;
 import com.snyder.contacts.model.EmailAddressImpl;
@@ -25,8 +27,6 @@ public class EmailDataImpl implements EmailData
 		org.jooq.h2.generated.tables.Email.EMAIL;
 	private static final Field<Integer> EMAIL_CONTACT_ID =
 		org.jooq.h2.generated.tables.Email.EMAIL.CONTACT_ID;
-	private static final Field<Integer> EMAIL_ID =
-		org.jooq.h2.generated.tables.Email.EMAIL.EMAIL_ID;
 	private static final Field<String> EMAIL_TYPE =
 		org.jooq.h2.generated.tables.Email.EMAIL.EMAIL_TYPE;
 	private static final Field<String> EMAIL_ =
@@ -57,7 +57,18 @@ public class EmailDataImpl implements EmailData
     public void insertEmailAddressesForContactId(DSLContext context, int contactId,
         List<EmailAddress> addresses)
     {
-	    // TODO Auto-generated method stub
+	    if(addresses.isEmpty())
+	    {
+	        return;
+	    }
+	    
+	    InsertValuesStep3<EmailRecord, Integer, String, String> insertStep = 
+	        context.insertInto(EMAIL, EMAIL_CONTACT_ID, EMAIL_TYPE, EMAIL_);
+	    for(EmailAddress address: addresses)
+	    {
+	        insertStep = insertStep.values(contactId, address.getType(), address.getEmail());
+	    }
+	    insertStep.execute();
     }
 
 	@Override
