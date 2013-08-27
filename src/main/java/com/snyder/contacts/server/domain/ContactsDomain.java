@@ -5,14 +5,15 @@ import java.util.List;
 import com.snyder.contacts.model.Contact;
 import com.snyder.contacts.model.ContactSort;
 import com.snyder.contacts.model.ContactSummary;
+import com.snyder.contacts.server.exceptions.InvalidContactException;
 
 
 public interface ContactsDomain
 {
     
-    int createContact(Contact contact);
+    int createContact(Contact contact) throws InvalidContactException;
     
-    void updateContact(Contact contact);
+    void updateContact(Contact contact) throws InvalidContactException;
     
     void deleteContact(int id);
 

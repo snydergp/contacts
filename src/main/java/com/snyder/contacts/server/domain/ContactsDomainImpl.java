@@ -9,6 +9,7 @@ import com.snyder.contacts.model.ContactSort;
 import com.snyder.contacts.model.ContactSummary;
 import com.snyder.contacts.model.validation.ContactValidation;
 import com.snyder.contacts.server.data.ContactsData;
+import com.snyder.contacts.server.exceptions.InvalidContactException;
 
 public class ContactsDomainImpl implements ContactsDomain
 {
@@ -23,7 +24,7 @@ public class ContactsDomainImpl implements ContactsDomain
     }
 
     @Override
-    public int createContact(Contact contact)
+    public int createContact(Contact contact) throws InvalidContactException
     {
         // Validate the contact instance
         Builder<String> errors = new ImmutableList.Builder<String>();
@@ -38,13 +39,12 @@ public class ContactsDomainImpl implements ContactsDomain
         else
         {
             // If errors were identified, return error listing to client
-            //TODO: custom checked exception
-            throw new IllegalStateException();
+            throw new InvalidContactException(errorList);
         }
     }
 
     @Override
-    public void updateContact(Contact contact)
+    public void updateContact(Contact contact) throws InvalidContactException
     {
         // Validate the contact instance
         Builder<String> errors = new ImmutableList.Builder<String>();
@@ -59,8 +59,7 @@ public class ContactsDomainImpl implements ContactsDomain
         else
         {
             // If errors were identified, return error listing to client
-            //TODO: custom checked exception
-            throw new IllegalStateException();
+            throw new InvalidContactException(errorList);
         }
     }
 

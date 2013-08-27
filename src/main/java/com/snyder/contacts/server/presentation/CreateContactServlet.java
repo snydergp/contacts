@@ -7,13 +7,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.net.MediaType;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.snyder.contacts.model.Business;
 import com.snyder.contacts.model.Contact;
 import com.snyder.contacts.model.ContactType;
 import com.snyder.contacts.model.Person;
 import com.snyder.contacts.server.domain.ContactsDomain;
+import com.snyder.contacts.server.exceptions.InvalidContactException;
 
 
 public class CreateContactServlet extends HttpServlet
@@ -51,9 +54,20 @@ public class CreateContactServlet extends HttpServlet
                 throw new IllegalArgumentException();
         }
         
-        domain.createContact(contact);
-        
-        resp.setStatus(HttpServletResponse.SC_OK);
+        try
+        {
+            domain.createContact(contact);
+            resp.setStatus(HttpServletResponse.SC_OK);
+        }
+        catch (InvalidContactException e)
+        {
+            String errorsJson = GSON.toJson(e.getErrors(), TypeToken.get(String.class).getType());
+            
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.setContentLength(errorsJson.length());
+            resp.setContentType(MediaType.JSON_UTF_8.subtype());
+            resp.getWriter().append(errorsJson);
+        }
     }
     
 }
