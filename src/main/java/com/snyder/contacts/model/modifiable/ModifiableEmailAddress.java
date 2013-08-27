@@ -5,6 +5,7 @@ package com.snyder.contacts.model.modifiable;
 
 import com.snyder.contacts.model.EmailAddress;
 import com.snyder.contacts.model.EmailAddressImpl;
+import com.snyder.contacts.model.validation.EmailAddressValidation;
 import com.snyder.modifiable.LeafModifiable;
 import com.snyder.modifiable.approved.ModificationApprover;
 import com.snyder.modifiable.validation.ValidatedApprovedCompositeModifiable;
@@ -26,8 +27,8 @@ public class ModifiableEmailAddress extends ValidatedApprovedCompositeModifiable
     public ModifiableEmailAddress(EmailAddress initial, ModificationApprover approver)
     {
 	    super(initial, approver);
-	    type = this.buildLeaf(initial.getType());
-	    email = this.buildLeaf(initial.getEmail());
+	    type = this.buildLeaf(initial.getType(), EmailAddressValidation.TYPE);
+	    email = this.buildLeaf(initial.getEmail(), EmailAddressValidation.EMAIL);
     }
 
 	@Override

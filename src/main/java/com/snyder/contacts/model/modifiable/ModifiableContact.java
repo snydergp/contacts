@@ -21,6 +21,7 @@ import com.snyder.contacts.model.PhoneNumberImpl;
 import com.snyder.contacts.model.validation.BusinessValidation;
 import com.snyder.contacts.model.validation.ContactValidation;
 import com.snyder.contacts.model.validation.PersonValidation;
+import com.snyder.modifiable.Modifiable;
 import com.snyder.modifiable.approved.ModificationApprover;
 import com.snyder.modifiable.validation.ValidatedApprovedCompositeModifiable;
 import com.snyder.modifiable.validation.ValidatedApprovedLeafModifiable;
@@ -40,7 +41,7 @@ public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Cont
     Map<ContactType, ValidatedApprovedCompositeModifiable<? extends Contact>> subtypeMap = 
         new EnumMap<ContactType, ValidatedApprovedCompositeModifiable<? extends Contact>>(
             ContactType.class);
-    private final ValidatedApprovedLeafModifiable<ContactType> type;
+    private final ValidatedApprovedLeafModifiable<ContactType> typeSelector;
     private final ValidatedApprovedLeafModifiable<String> info;
     private final ValidatedListControls<Address, ModifiableAddress> addresses;
     private final ValidatedListControls<PhoneNumber, ModifiablePhoneNumber> phoneNumbers;
@@ -50,8 +51,10 @@ public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Cont
     {
         super(initial, approver);
         
+        // Build the info modifiable
         info = this.buildLeaf(initial.getInfo(), ContactValidation.INFO);
         
+        // Determine the initial subtype and generate both of the subtype POJOs
         ContactType currentType;
         Person person;
         Business business;
@@ -71,23 +74,34 @@ public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Cont
         {
             throw new IllegalStateException("Unknown Contact subtype");
         }
+        
+        // Create the Modifiable for the Person subtype
         ModifiablePerson modifiablePerson = new ModifiablePerson(person, this);
         subtypeMap.put(ContactType.PERSON, modifiablePerson);
+        
+        // Create the Modifiable for the Business subtype
         ModifiableBusiness modifiableBusiness = new ModifiableBusiness(business, this);
         subtypeMap.put(ContactType.BUSINESS, modifiableBusiness);
-        type = this.buildLeaf(currentType, new NullValidation<ContactType>("Type"));
-        type.getModifiedState().addObserver(new TypeObserver(), true);
         
+        // Generate the leaf used to control the selected subtype
+        typeSelector = this.buildLeaf(currentType, new NullValidation<ContactType>("Type"));
+        
+        // Start observing the type selector (performs initialization of subtype member)
+        typeSelector.getModifiedState().addObserver(new TypeObserver(), true);
+        
+        // Build the modifiable address listing
         AddressFunctions addressFunctions = new AddressFunctions();
         addresses = new ValidatedListControls<Address, ModifiableAddress>(initial.getAddresses(), 
             addressFunctions, addressFunctions);
         this.addChild(addresses.getModifiableList());
-
+        
+        // Build the modifiable phone number listing
         PhoneNumberFunctions phoneNumberFunctions = new PhoneNumberFunctions();
         phoneNumbers = new ValidatedListControls<PhoneNumber, ModifiablePhoneNumber>(
             initial.getPhoneNumbers(), phoneNumberFunctions, phoneNumberFunctions);
         this.addChild(phoneNumbers.getModifiableList());
-
+        
+        // Build the modifiable email address listing
         EmailAddressFunctions emailAddressFunctions = new EmailAddressFunctions();
         emailAddresses = new ValidatedListControls<EmailAddress, ModifiableEmailAddress>(
             initial.getEmailAddresses(), emailAddressFunctions, emailAddressFunctions);
@@ -101,12 +115,12 @@ public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Cont
         
         // Obtain the modified instance of the currently-selected subtype
         ContactImpl mod;
-        if(type.getModified() == ContactType.PERSON)
+        if(typeSelector.getModified() == ContactType.PERSON)
         {
             ModifiablePerson modifiablePerson = (ModifiablePerson) subtype.get();
             mod = new PersonImpl(modifiablePerson.getModified());
         }
-        else if(type.getModified() == ContactType.BUSINESS)
+        else if(typeSelector.getModified() == ContactType.BUSINESS)
         {
             ModifiableBusiness modifiableBusiness = (ModifiableBusiness) subtype.get();
             mod = new BusinessImpl(modifiableBusiness.getModified());
@@ -142,7 +156,7 @@ public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Cont
     
     public ValidatedApprovedLeafModifiable<ContactType> getType()
     {
-        return type;
+        return typeSelector;
     }
 
     public ValidatedApprovedLeafModifiable<String> getInfo()
@@ -165,6 +179,11 @@ public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Cont
         return emailAddresses;
     }
 
+    /**
+     * The {@link Modifiable} representing data in the {@link Person} subtype.
+     * 
+     * @author SnyderGP
+     */
     public class ModifiablePerson extends ValidatedApprovedCompositeModifiable<Person>
     {
         
@@ -172,7 +191,7 @@ public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Cont
         private final ValidatedApprovedLeafModifiable<String> middleInitial;
         private final ValidatedApprovedLeafModifiable<String> lastName;
 
-        public ModifiablePerson(Person initial, ModificationApprover approver)
+        protected ModifiablePerson(Person initial, ModificationApprover approver)
         {
             super(initial, approver);
             firstName = this.buildLeaf(initial.getFirstName(), PersonValidation.FIRST);
@@ -190,14 +209,34 @@ public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Cont
             return mod;
         }
         
+        public ValidatedApprovedLeafModifiable<String> getFirstName()
+        {
+            return firstName;
+        }
+        
+        public ValidatedApprovedLeafModifiable<String> getMiddleInitial()
+        {
+            return middleInitial;
+        }
+        
+        public ValidatedApprovedLeafModifiable<String> getLastName()
+        {
+            return lastName;
+        }
+        
     }
 
+    /**
+     * The {@link Modifiable} representing data in the {@link Business} subtype.
+     * 
+     * @author SnyderGP
+     */
     public class ModifiableBusiness extends ValidatedApprovedCompositeModifiable<Business>
     {
         
         private final ValidatedApprovedLeafModifiable<String> name;
 
-        public ModifiableBusiness(Business initial, ModificationApprover approver)
+        protected ModifiableBusiness(Business initial, ModificationApprover approver)
         {
             super(initial, approver);
             name = this.buildLeaf(initial.getName(), BusinessValidation.NAME);
@@ -272,6 +311,13 @@ public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Cont
         
     }
     
+    /**
+     * Switches the subtype modifiable state to correspond to the selected {@link ContactType}.
+     * In doing so, it ensures that only the currently-selected subtype is attached to the parent
+     * modifiable.
+     * 
+     * @author SnyderGP
+     */
     private class TypeObserver implements StateObserver<ContactType>
     {
 
