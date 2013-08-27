@@ -17,4 +17,6 @@ public interface AddressData
     
     void clearAddressesForContact(DSLContext context, int contactId);
     
+
+    
 }

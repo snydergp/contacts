@@ -10,7 +10,7 @@ import java.util.List;
  * 
  * @author greg
  */
-public class ContactImpl
+public class ContactImpl implements Contact
 {
 
 	private int id = -1;
