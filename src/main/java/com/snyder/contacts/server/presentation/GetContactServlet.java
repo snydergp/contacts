@@ -103,5 +103,16 @@ public class GetContactServlet extends HttpServlet
             resp.getWriter().append(errorsJson);
         }
     }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException
+    {
+        int contactId = Integer.parseInt(req.getParameter("contactId"));
+        
+        domain.deleteContact(contactId);
+        
+        resp.setStatus(HttpServletResponse.SC_OK);
+    }
     
 }
