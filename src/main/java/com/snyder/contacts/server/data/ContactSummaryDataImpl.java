@@ -34,17 +34,6 @@ public class ContactSummaryDataImpl implements ContactSummaryData
 
     @Override
     public List<ContactSummary> getContacts(DSLContext context, ContactSort field, 
-        boolean ascending, int limit)
-    {
-        SelectJoinStep<Record3<Integer, String, String>> selectJoin = getSelectJoin(context, field);
-        SelectLimitStep<Record3<Integer, String, String>> selectLimit = 
-            getSelectLimit(selectJoin, field, ascending);
-        Result<Record3<Integer, String, String>> results = selectLimit.limit(limit).fetch();
-        return processResults(results);
-    }
-
-    @Override
-    public List<ContactSummary> getContacts(DSLContext context, ContactSort field, 
         boolean ascending, int offset, int limit)
     {
         SelectJoinStep<Record3<Integer, String, String>> selectJoin = getSelectJoin(context, field);
