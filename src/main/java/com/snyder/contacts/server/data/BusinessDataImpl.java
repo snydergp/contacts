@@ -7,9 +7,9 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.h2.generated.tables.records.BusinessRecord;
 
-import com.snyder.contacts.model.Business;
-import com.snyder.contacts.model.BusinessImpl;
-import com.snyder.contacts.model.Contact;
+import com.snyder.contacts.shared.model.Business;
+import com.snyder.contacts.shared.model.BusinessImpl;
+import com.snyder.contacts.shared.model.Contact;
 
 /**
  * 

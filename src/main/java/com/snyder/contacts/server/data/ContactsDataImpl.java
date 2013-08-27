@@ -15,9 +15,9 @@ import org.jooq.h2.generated.tables.records.ContactRecord;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.snyder.contacts.model.Contact;
-import com.snyder.contacts.model.ContactSort;
-import com.snyder.contacts.model.ContactSummary;
+import com.snyder.contacts.shared.model.Contact;
+import com.snyder.contacts.shared.model.ContactSort;
+import com.snyder.contacts.shared.model.ContactSummary;
 
 /**
  * 

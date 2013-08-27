@@ -1,7 +1,7 @@
-package com.snyder.contacts.model.validation;
+package com.snyder.contacts.shared.model.validation;
 
 import com.google.common.collect.ImmutableCollection.Builder;
-import com.snyder.contacts.model.EmailAddress;
+import com.snyder.contacts.shared.model.EmailAddress;
 import com.snyder.review.shared.validator.algorithm.LengthValidation;
 import com.snyder.review.shared.validator.algorithm.ValidationAlgorithm;
 

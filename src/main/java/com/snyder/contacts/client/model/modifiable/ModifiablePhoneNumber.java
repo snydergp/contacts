@@ -1,8 +1,8 @@
-package com.snyder.contacts.model.modifiable;
+package com.snyder.contacts.client.model.modifiable;
 
-import com.snyder.contacts.model.PhoneNumber;
-import com.snyder.contacts.model.PhoneNumberImpl;
-import com.snyder.contacts.model.validation.PhoneNumberValidation;
+import com.snyder.contacts.shared.model.PhoneNumber;
+import com.snyder.contacts.shared.model.PhoneNumberImpl;
+import com.snyder.contacts.shared.model.validation.PhoneNumberValidation;
 import com.snyder.modifiable.approved.ModificationApprover;
 import com.snyder.modifiable.validation.ValidatedApprovedCompositeModifiable;
 import com.snyder.modifiable.validation.ValidatedApprovedLeafModifiable;

@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
-import com.snyder.contacts.model.Contact;
 import com.snyder.contacts.server.domain.ContactsDomain;
+import com.snyder.contacts.shared.model.Contact;
 
 
 public class GetContactServlet extends HttpServlet

@@ -3,7 +3,7 @@
  */
 package com.snyder.contacts.server.data;
 
-import com.snyder.contacts.model.Person;
+import com.snyder.contacts.shared.model.Person;
 
 /**
  * 

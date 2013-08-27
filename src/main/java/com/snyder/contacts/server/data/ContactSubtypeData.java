@@ -2,7 +2,7 @@ package com.snyder.contacts.server.data;
 
 import org.jooq.DSLContext;
 
-import com.snyder.contacts.model.Contact;
+import com.snyder.contacts.shared.model.Contact;
 
 
 public interface ContactSubtypeData<T extends Contact>

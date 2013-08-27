@@ -13,10 +13,10 @@ import org.jooq.SortField;
 import org.jooq.h2.generated.tables.NameByFirst;
 import org.jooq.h2.generated.tables.NameByLast;
 
-import com.snyder.contacts.model.ContactSort;
-import com.snyder.contacts.model.ContactSummary;
-import com.snyder.contacts.model.ContactSummaryImpl;
-import com.snyder.contacts.model.ContactType;
+import com.snyder.contacts.shared.model.ContactSort;
+import com.snyder.contacts.shared.model.ContactSummary;
+import com.snyder.contacts.shared.model.ContactSummaryImpl;
+import com.snyder.contacts.shared.model.ContactType;
 
 
 public class ContactSummaryDataImpl implements ContactSummaryData

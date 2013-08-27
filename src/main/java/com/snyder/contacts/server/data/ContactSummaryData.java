@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.jooq.DSLContext;
 
-import com.snyder.contacts.model.ContactSort;
-import com.snyder.contacts.model.ContactSummary;
+import com.snyder.contacts.shared.model.ContactSort;
+import com.snyder.contacts.shared.model.ContactSummary;
 
 
 public interface ContactSummaryData

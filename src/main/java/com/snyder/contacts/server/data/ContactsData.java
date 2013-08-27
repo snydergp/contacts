@@ -5,9 +5,9 @@ package com.snyder.contacts.server.data;
 
 import java.util.List;
 
-import com.snyder.contacts.model.Contact;
-import com.snyder.contacts.model.ContactSort;
-import com.snyder.contacts.model.ContactSummary;
+import com.snyder.contacts.shared.model.Contact;
+import com.snyder.contacts.shared.model.ContactSort;
+import com.snyder.contacts.shared.model.ContactSummary;
 
 /**
  * 

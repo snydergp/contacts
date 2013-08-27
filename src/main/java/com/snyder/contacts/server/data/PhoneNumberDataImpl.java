@@ -13,8 +13,8 @@ import org.jooq.Record2;
 import org.jooq.Result;
 import org.jooq.h2.generated.tables.records.PhoneNumberRecord;
 
-import com.snyder.contacts.model.PhoneNumber;
-import com.snyder.contacts.model.PhoneNumberImpl;
+import com.snyder.contacts.shared.model.PhoneNumber;
+import com.snyder.contacts.shared.model.PhoneNumberImpl;
 
 /**
  * 

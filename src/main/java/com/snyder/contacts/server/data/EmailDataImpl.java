@@ -13,8 +13,8 @@ import org.jooq.Record2;
 import org.jooq.Result;
 import org.jooq.h2.generated.tables.records.EmailRecord;
 
-import com.snyder.contacts.model.EmailAddress;
-import com.snyder.contacts.model.EmailAddressImpl;
+import com.snyder.contacts.shared.model.EmailAddress;
+import com.snyder.contacts.shared.model.EmailAddressImpl;
 
 /**
  * 

@@ -1,11 +1,11 @@
 /**
  * 
  */
-package com.snyder.contacts.model.modifiable;
+package com.snyder.contacts.client.model.modifiable;
 
-import com.snyder.contacts.model.EmailAddress;
-import com.snyder.contacts.model.EmailAddressImpl;
-import com.snyder.contacts.model.validation.EmailAddressValidation;
+import com.snyder.contacts.shared.model.EmailAddress;
+import com.snyder.contacts.shared.model.EmailAddressImpl;
+import com.snyder.contacts.shared.model.validation.EmailAddressValidation;
 import com.snyder.modifiable.LeafModifiable;
 import com.snyder.modifiable.approved.ModificationApprover;
 import com.snyder.modifiable.validation.ValidatedApprovedCompositeModifiable;

@@ -7,10 +7,10 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record5;
 
-import com.snyder.contacts.model.Contact;
-import com.snyder.contacts.model.Person;
-import com.snyder.contacts.model.PersonImpl;
-import com.snyder.contacts.model.Title;
+import com.snyder.contacts.shared.model.Contact;
+import com.snyder.contacts.shared.model.Person;
+import com.snyder.contacts.shared.model.PersonImpl;
+import com.snyder.contacts.shared.model.Title;
 
 /**
  * 

@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.jooq.DSLContext;
 
-import com.snyder.contacts.model.PhoneNumber;
+import com.snyder.contacts.shared.model.PhoneNumber;
 
 /**
  * 

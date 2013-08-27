@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.jooq.DSLContext;
 
-import com.snyder.contacts.model.EmailAddress;
+import com.snyder.contacts.shared.model.EmailAddress;
 
 /**
  * 

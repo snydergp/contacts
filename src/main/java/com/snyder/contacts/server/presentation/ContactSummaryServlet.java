@@ -12,9 +12,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.snyder.contacts.model.ContactSort;
-import com.snyder.contacts.model.ContactSummary;
 import com.snyder.contacts.server.domain.ContactsDomain;
+import com.snyder.contacts.shared.model.ContactSort;
+import com.snyder.contacts.shared.model.ContactSummary;
 
 
 @Singleton

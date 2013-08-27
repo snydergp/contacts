@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.jooq.DSLContext;
 
-import com.snyder.contacts.model.Address;
+import com.snyder.contacts.shared.model.Address;
 
 
 public interface AddressData

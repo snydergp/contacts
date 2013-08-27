@@ -4,12 +4,12 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-import com.snyder.contacts.model.Contact;
-import com.snyder.contacts.model.ContactSort;
-import com.snyder.contacts.model.ContactSummary;
-import com.snyder.contacts.model.validation.ContactValidation;
 import com.snyder.contacts.server.data.ContactsData;
 import com.snyder.contacts.server.exceptions.InvalidContactException;
+import com.snyder.contacts.shared.model.Contact;
+import com.snyder.contacts.shared.model.ContactSort;
+import com.snyder.contacts.shared.model.ContactSummary;
+import com.snyder.contacts.shared.model.validation.ContactValidation;
 
 public class ContactsDomainImpl implements ContactsDomain
 {

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.snyder.contacts.model;
+package com.snyder.contacts.shared.model;
 
 
 /**

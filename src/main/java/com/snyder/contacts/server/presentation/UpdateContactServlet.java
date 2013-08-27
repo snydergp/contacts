@@ -11,12 +11,12 @@ import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
-import com.snyder.contacts.model.Business;
-import com.snyder.contacts.model.Contact;
-import com.snyder.contacts.model.ContactType;
-import com.snyder.contacts.model.Person;
 import com.snyder.contacts.server.domain.ContactsDomain;
 import com.snyder.contacts.server.exceptions.InvalidContactException;
+import com.snyder.contacts.shared.model.Business;
+import com.snyder.contacts.shared.model.Contact;
+import com.snyder.contacts.shared.model.ContactType;
+import com.snyder.contacts.shared.model.Person;
 
 
 public class UpdateContactServlet extends HttpServlet

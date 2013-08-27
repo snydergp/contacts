@@ -3,7 +3,7 @@
  */
 package com.snyder.contacts.client.viewmodel.listing;
 
-import com.snyder.contacts.model.ContactSummary;
+import com.snyder.contacts.shared.model.ContactSummary;
 
 /**
  * 

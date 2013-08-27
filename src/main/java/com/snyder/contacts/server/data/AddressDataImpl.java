@@ -10,8 +10,8 @@ import org.jooq.InsertSetStep;
 import org.jooq.Result;
 import org.jooq.h2.generated.tables.records.AddressRecord;
 
-import com.snyder.contacts.model.Address;
-import com.snyder.contacts.model.AddressImpl;
+import com.snyder.contacts.shared.model.Address;
+import com.snyder.contacts.shared.model.AddressImpl;
 
 
 public class AddressDataImpl implements AddressData

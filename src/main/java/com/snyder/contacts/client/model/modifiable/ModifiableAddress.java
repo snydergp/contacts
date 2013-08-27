@@ -1,8 +1,8 @@
-package com.snyder.contacts.model.modifiable;
+package com.snyder.contacts.client.model.modifiable;
 
-import com.snyder.contacts.model.Address;
-import com.snyder.contacts.model.AddressImpl;
-import com.snyder.contacts.model.validation.AddressValidation;
+import com.snyder.contacts.shared.model.Address;
+import com.snyder.contacts.shared.model.AddressImpl;
+import com.snyder.contacts.shared.model.validation.AddressValidation;
 import com.snyder.modifiable.LeafModifiable;
 import com.snyder.modifiable.approved.ModificationApprover;
 import com.snyder.modifiable.validation.ValidatedApprovedCompositeModifiable;

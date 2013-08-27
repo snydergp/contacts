@@ -1,8 +1,8 @@
-package com.snyder.contacts.model.validation;
+package com.snyder.contacts.shared.model.validation;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableCollection.Builder;
-import com.snyder.contacts.model.PhoneNumber;
+import com.snyder.contacts.shared.model.PhoneNumber;
 import com.snyder.review.shared.validator.algorithm.LengthValidation;
 import com.snyder.review.shared.validator.algorithm.ValidationAlgorithm;
 
