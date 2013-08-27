@@ -19,7 +19,7 @@ import com.snyder.contacts.shared.model.ContactType;
 import com.snyder.contacts.shared.model.Person;
 
 
-public class UpdateContactServlet extends HttpServlet
+public class ContactServlet extends HttpServlet
 {
     private static final long serialVersionUID = 1L;
     
@@ -28,9 +28,25 @@ public class UpdateContactServlet extends HttpServlet
     private final ContactsDomain domain;
 
     @Inject
-    public UpdateContactServlet(ContactsDomain domain)
+    public ContactServlet(ContactsDomain domain)
     {
         this.domain = domain;
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
+        IOException
+    {
+        int contactId = Integer.parseInt(req.getParameter("contactId"));
+        
+        Contact contact = domain.getContactById(contactId);
+        //TODO add ContactNotFound exception and make interface NonNull
+        
+        String contactJson = GSON.toJson(contact);
+        
+        resp.setStatus(HttpServletResponse.SC_OK);
+        resp.setContentLength(contactJson.length());
+        resp.getWriter().append(contactJson);
     }
 
     @Override
@@ -66,7 +82,15 @@ public class UpdateContactServlet extends HttpServlet
         
         try
         {
-            domain.updateContact(contact);
+            if(contact.getId() < 0)
+            {
+                int id = domain.createContact(contact);
+                resp.getWriter().append(Integer.toString(id));
+            }
+            else
+            {
+                domain.updateContact(contact);
+            }
             resp.setStatus(HttpServletResponse.SC_OK);
         }
         catch (InvalidContactException e)
@@ -78,6 +102,17 @@ public class UpdateContactServlet extends HttpServlet
             resp.setContentType(MediaType.JSON_UTF_8.subtype());
             resp.getWriter().append(errorsJson);
         }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException
+    {
+        int contactId = Integer.parseInt(req.getParameter("contactId"));
+        
+        domain.deleteContact(contactId);
+        
+        resp.setStatus(HttpServletResponse.SC_OK);
     }
     
 }
