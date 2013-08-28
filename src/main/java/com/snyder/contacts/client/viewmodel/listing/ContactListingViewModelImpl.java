@@ -13,11 +13,11 @@ import com.snyder.contacts.shared.model.ContactSort;
 import com.snyder.contacts.shared.model.ContactSummary;
 import com.snyder.state.State;
 import com.snyder.state.StateObserver;
-import com.snyder.state.list.HasListEvents;
+import com.snyder.state.list.OrderedStoreView;
 import com.snyder.state.nonnull.BaseMutableNonNullState;
 import com.snyder.state.nonnull.MutableNonNullState;
 import com.snyder.state.store.BaseStore;
-import com.snyder.state.store.OrderedStoreView;
+import com.snyder.state.store.StoreOrderer;
 
 /**
  * 
@@ -35,8 +35,8 @@ public class ContactListingViewModelImpl implements ContactListingViewModel
 		new BaseMutableNonNullState<Boolean>(Boolean.TRUE);
 	private final BaseStore<ContactSummary, Integer> contactStore = 
 		new BaseStore<ContactSummary, Integer>(new ContactIdFunction());
-	private final OrderedStoreView<ContactSummary> orderedContacts = 
-		new OrderedStoreView<ContactSummary>(contactStore, new AscendingNameComparator());
+	private final StoreOrderer<ContactSummary> orderedContacts = 
+		new StoreOrderer<ContactSummary>(contactStore, new AscendingNameComparator());
 	
 	public ContactListingViewModelImpl(ContactServer server)
 	{
@@ -56,7 +56,7 @@ public class ContactListingViewModelImpl implements ContactListingViewModel
 	}
 
 	@Override
-	public HasListEvents<ContactSummary> getContactListing()
+	public OrderedStoreView<ContactSummary> getContactListing()
 	{
 	    return orderedContacts;
 	}
@@ -64,7 +64,7 @@ public class ContactListingViewModelImpl implements ContactListingViewModel
 	@Override
 	public void loadMore()
 	{
-		server.getContacts(contactStore.getView().size(), contactSort.get(), ascending.get(), 
+		server.getContacts(contactStore.getItems().size(), contactSort.get(), ascending.get(), 
 			LOAD_LIMIT, new StoreLoadCB(), null);
 	}
 
