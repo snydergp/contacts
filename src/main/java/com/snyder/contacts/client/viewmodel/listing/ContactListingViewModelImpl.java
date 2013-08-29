@@ -31,20 +31,21 @@ public class ContactListingViewModelImpl implements ContactListingViewModel
 		new BaseMutableNonNullState<ContactSort>(ContactSort.FIRST_NAME);
 	private final MutableNonNullState<Boolean> ascending = 
 		new BaseMutableNonNullState<Boolean>(Boolean.TRUE);
-	private final BaseStore<ContactSummary, Integer> contactStore = 
-		new BaseStore<ContactSummary, Integer>(new ContactIdFunction());
-	private final StoreOrderer<ContactSummary> orderedContacts = 
-		new StoreOrderer<ContactSummary>(contactStore, new AscendingNameComparator());
+	private final BaseStore<ContactSummaryViewModel, Integer> contactStore = 
+		new BaseStore<ContactSummaryViewModel, Integer>(new ContactIdFunction());
+	private final StoreOrderer<ContactSummaryViewModel> orderedContacts = 
+		new StoreOrderer<ContactSummaryViewModel>(contactStore, new AscendingNameComparator());
 	
 	public ContactListingViewModelImpl(ContactServer server)
 	{
 		this.server = server;
 		
-		contactSort.addObserver(new ContactSortObserver());
-		ascending.addObserver(new SortDirectionObserver());
+		SortChangeObserver sortObserver = new SortChangeObserver();
+		contactSort.addObserver(sortObserver);
+		ascending.addObserver(sortObserver);
 		
 		// Do initial load
-		loadMore();
+        server.getContacts(new StoreLoadCB(), null);
 	}
 	
 	@Override
@@ -54,7 +55,7 @@ public class ContactListingViewModelImpl implements ContactListingViewModel
 	}
 
 	@Override
-	public OrderedStoreView<ContactSummary> getContactListing()
+	public OrderedStoreView<ContactSummaryViewModel> getContactListing()
 	{
 	    return orderedContacts;
 	}
@@ -74,7 +75,7 @@ public class ContactListingViewModelImpl implements ContactListingViewModel
 		@Override
         public void onSuccess(List<ContactSummary> value)
         {
-	        contactStore.add(value);
+	        // TODO contactStore.add(new Covalue);
         }
 		
 	}
@@ -82,13 +83,13 @@ public class ContactListingViewModelImpl implements ContactListingViewModel
 	/**
 	 * Maps a ContactSummary to its id
 	 */
-	private class ContactIdFunction implements Function<ContactSummary, Integer>
+	private class ContactIdFunction implements Function<ContactSummaryViewModel, Integer>
 	{
 
 		@Override
-        public Integer apply(ContactSummary input)
+        public Integer apply(ContactSummaryViewModel input)
         {
-	        return input.getId();
+	        return input.getSummary().getId();
         }
 		
 	}
@@ -97,40 +98,18 @@ public class ContactListingViewModelImpl implements ContactListingViewModel
 	 * Observes the ascending/descending sort state for changes, updating the selected comparator
 	 * and reloading the store
 	 */
-	private class SortDirectionObserver implements StateObserver<Boolean>
+	private class SortChangeObserver implements StateObserver<Object>
 	{
 
 		@Override
-        public void stateChanged(State<? extends Boolean> state, Boolean oldValue, Boolean newValue)
+        public void stateChanged(State<? extends Object> state, Object oldValue, Object newValue)
         {
-			// Clear the store
-			contactStore.clear();
-			
+		    // Get the appropriate comparator
+		    Comparator<ContactSummaryViewModel> comparator = ascending.get() ? 
+		        new AscendingNameComparator() : new DescendingNameComparator();
+		    
 			// Switch the sort of displayed items
-			orderedContacts.setComparator(newValue ? new AscendingNameComparator() : 
-				new DescendingNameComparator());
-			
-	        // Reload
-			loadMore();
-        }
-		
-	}
-	
-	/**
-	 * Observes the {@link ContactSort} state for changes and reloads the store
-	 */
-	private class ContactSortObserver implements StateObserver<ContactSort>
-	{
-
-		@Override
-        public void stateChanged(State<? extends ContactSort> state, ContactSort oldValue,
-            ContactSort newValue)
-        {
-			// Clear the store
-			contactStore.clear();
-
-			// Reload
-			loadMore();
+			orderedContacts.setComparator(comparator);
         }
 		
 	}
@@ -138,14 +117,15 @@ public class ContactListingViewModelImpl implements ContactListingViewModel
 	/**
 	 * Sorts {@link ContactSummary} instances in ascending alphabetical order by display name
 	 */
-	private class AscendingNameComparator implements Comparator<ContactSummary>
+	private class AscendingNameComparator implements Comparator<ContactSummaryViewModel>
 	{
 
 		@Override
-        public int compare(ContactSummary o1, ContactSummary o2)
+        public int compare(ContactSummaryViewModel o1, ContactSummaryViewModel o2)
         {
 		    ContactSort currentSort = contactSort.get();
-	        return o1.toDisplay(currentSort).compareTo(o2.toDisplay(currentSort));
+	        return o1.getSummary().toDisplay(currentSort).compareTo(
+	            o2.getSummary().toDisplay(currentSort));
         }
 		
 	}
@@ -153,14 +133,15 @@ public class ContactListingViewModelImpl implements ContactListingViewModel
 	/**
 	 * Sorts {@link ContactSummary} instances in descending alphabetical order by display name
 	 */
-	private class DescendingNameComparator implements Comparator<ContactSummary>
+	private class DescendingNameComparator implements Comparator<ContactSummaryViewModel>
 	{
 
 		@Override
-        public int compare(ContactSummary o1, ContactSummary o2)
+        public int compare(ContactSummaryViewModel o1, ContactSummaryViewModel o2)
         {
             ContactSort currentSort = contactSort.get();
-            return o2.toDisplay(currentSort).compareTo(o1.toDisplay(currentSort));
+            return o2.getSummary().toDisplay(currentSort).compareTo(
+                o1.getSummary().toDisplay(currentSort));
         }
 		
 	}

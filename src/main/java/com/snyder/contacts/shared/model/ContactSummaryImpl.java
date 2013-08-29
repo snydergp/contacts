@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.gson.annotations.SerializedName;
 
 
 /**
@@ -18,11 +19,16 @@ public class ContactSummaryImpl implements ContactSummary
 {
     
     private static final Joiner NAME_JOINER = Joiner.on(' ');
-	
+
+    @SerializedName("i")
 	private int id = -1;
+	@SerializedName("f")
     private String firstName;
+    @SerializedName("m")
     private String middleInitial;
+    @SerializedName("l")
     private String lastName;
+    @SerializedName("t")
 	private ContactType type;
     
     public ContactSummaryImpl()

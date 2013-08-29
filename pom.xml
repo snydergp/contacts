@@ -18,11 +18,16 @@
 		</plugins>
 	</build>
 	<dependencies>
-		<dependency>
-			<groupId>com.snyder</groupId>
-			<artifactId>modifiable</artifactId>
-			<version>1.0</version>
-		</dependency>
+        <dependency>
+            <groupId>com.snyder</groupId>
+            <artifactId>modifiable</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.snyder</groupId>
+            <artifactId>gxt-state</artifactId>
+            <version>1.0</version>
+        </dependency>
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq</artifactId>
