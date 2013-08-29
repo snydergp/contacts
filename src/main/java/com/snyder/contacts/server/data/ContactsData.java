@@ -6,7 +6,6 @@ package com.snyder.contacts.server.data;
 import java.util.List;
 
 import com.snyder.contacts.shared.model.Contact;
-import com.snyder.contacts.shared.model.ContactSort;
 import com.snyder.contacts.shared.model.ContactSummary;
 
 /**
@@ -24,6 +23,6 @@ public interface ContactsData
 
 	Contact getContactById(int id);
 	
-	List<ContactSummary> getContacts(ContactSort field, boolean ascending, int startingAtId, int limit);
+	List<ContactSummary> getContacts();
 	
 }

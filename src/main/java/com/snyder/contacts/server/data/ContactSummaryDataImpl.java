@@ -5,15 +5,13 @@ import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Record3;
+import org.jooq.Param;
+import org.jooq.Record5;
 import org.jooq.Result;
+import org.jooq.Select;
 import org.jooq.SelectJoinStep;
-import org.jooq.SelectLimitStep;
-import org.jooq.SortField;
-import org.jooq.h2.generated.tables.NameByFirst;
-import org.jooq.h2.generated.tables.NameByLast;
+import org.jooq.impl.DSL;
 
-import com.snyder.contacts.shared.model.ContactSort;
 import com.snyder.contacts.shared.model.ContactSummary;
 import com.snyder.contacts.shared.model.ContactSummaryImpl;
 import com.snyder.contacts.shared.model.ContactType;
@@ -22,95 +20,81 @@ import com.snyder.contacts.shared.model.ContactType;
 public class ContactSummaryDataImpl implements ContactSummaryData
 {
     
-    private static final NameByFirst NAME_BY_FIRST = NameByFirst.NAME_BY_FIRST;
-    private static final Field<Integer> F_ID = NameByFirst.NAME_BY_FIRST.CONTACT_ID;
-    private static final Field<String> F_NAME = NameByFirst.NAME_BY_FIRST.NAME;
-    private static final Field<String> F_TYPE = NameByFirst.NAME_BY_FIRST.TYPE;
+    private static final String TYPE_FIELD_NAME = "type";
     
-    private static final NameByLast NAME_BY_LAST = NameByLast.NAME_BY_LAST;
-    private static final Field<Integer> L_ID = NameByLast.NAME_BY_LAST.CONTACT_ID;
-    private static final Field<String> L_NAME = NameByLast.NAME_BY_LAST.NAME;
-    private static final Field<String> L_TYPE = NameByLast.NAME_BY_LAST.TYPE;
+    private static final org.jooq.h2.generated.tables.Person PERSON =
+        org.jooq.h2.generated.tables.Person.PERSON;
+    private static final Field<Integer> PERSON_ID =
+        org.jooq.h2.generated.tables.Person.PERSON.CONTACT_ID;
+    private static final Field<String> FIRST_NAME =
+        org.jooq.h2.generated.tables.Person.PERSON.FIRST_NAME;
+    private static final Field<String> MIDDLE_INITIAL =
+        org.jooq.h2.generated.tables.Person.PERSON.MIDDLE_INITIAL;
+    private static final Field<String> LAST_NAME =
+        org.jooq.h2.generated.tables.Person.PERSON.LAST_NAME;
+    
+    private static final org.jooq.h2.generated.tables.Business BUSINESS = 
+        org.jooq.h2.generated.tables.Business.BUSINESS;
+    private static final Field<Integer> CONTACT_ID = BUSINESS.CONTACT_ID;
+    private static final Field<String> NAME = BUSINESS.NAME;
 
     @Override
-    public List<ContactSummary> getContacts(DSLContext context, ContactSort field, 
-        boolean ascending, int offset, int limit)
+    public List<ContactSummary> getContacts(DSLContext context)
     {
-        SelectJoinStep<Record3<Integer, String, String>> selectJoin = getSelectJoin(context, field);
-        SelectLimitStep<Record3<Integer, String, String>> selectLimit = 
-            getSelectLimit(selectJoin, field, ascending);
-        Result<Record3<Integer, String, String>> results = selectLimit.limit(offset, limit).fetch();
+        // Build a field constant to mark person records
+        Param<String> personCode = DSL.param(TYPE_FIELD_NAME, String.class);
+        personCode.setValue(ContactType.PERSON.toCode());
+        
+        // Build the person select
+        SelectJoinStep<Record5<Integer, String, String, String, String>> personSelect = 
+            context.select(PERSON_ID, FIRST_NAME, MIDDLE_INITIAL, LAST_NAME, personCode)
+                .from(PERSON);
+        
+        // Set up the business name fields to alias to the person field names (w/ M.I. & LAST as "")
+        Field<String> firstName = NAME.as(FIRST_NAME.getName());
+        Param<String> middleInitial = DSL.param(MIDDLE_INITIAL.getName(), String.class);
+        middleInitial.setValue("");
+        Param<String> lastName = DSL.param(LAST_NAME.getName(), String.class);
+        lastName.setValue("");
+
+        // Build a field constant to mark business records
+        Param<String> businessCode = DSL.param(TYPE_FIELD_NAME, String.class);
+        personCode.setValue(ContactType.BUSINESS.toCode());
+        
+        // Build the business select, with fields aliased to match the person select
+        SelectJoinStep<Record5<Integer, String, String, String, String>> businessSelect = 
+            context.select(CONTACT_ID, firstName, middleInitial, lastName, businessCode)
+                .from(BUSINESS);
+        
+        // Union the buiness and person selects
+        Select<Record5<Integer, String, String, String, String>> union = 
+            personSelect.union(businessSelect);
+        
+        // Execute the union select
+        Result<Record5<Integer, String, String, String, String>> results = union.fetch();
+        
         return processResults(results);
     }
     
     /**
-     * Get the SelectJoinStep instance, which declared the fields and table from which data is 
-     * selected.
-     * 
-     * @param context
-     * @param sort
-     * @return
-     */
-    private SelectJoinStep<Record3<Integer, String, String>> getSelectJoin(DSLContext context, 
-        ContactSort sort)
-    {
-        switch(sort)
-        {
-            case FIRST_NAME:
-                return context.select(F_ID, F_NAME, F_TYPE).from(NAME_BY_FIRST);
-            case LAST_NAME:
-                return context.select(L_ID, L_NAME, L_TYPE).from(NAME_BY_LAST);
-            default:
-                throw new IllegalStateException();
-        }
-    }
-    
-    /**
-     * Get the SelectLimitStep, which expands on the SelectJoinStep parameter with a sort 
-     * specification.
-     * 
-     * @param selectJoin
-     * @param sort
-     * @param ascending
-     * @return
-     */
-    private SelectLimitStep<Record3<Integer, String, String>> getSelectLimit(
-        SelectJoinStep<Record3<Integer, String, String>> selectJoin, ContactSort sort, 
-        boolean ascending)
-    {
-        Field<String> field;
-        switch(sort)
-        {
-            case FIRST_NAME:
-                field = F_NAME;
-                break;
-            case LAST_NAME:
-                field = L_NAME;
-                break;
-            default:
-                throw new IllegalStateException();
-        }
-        
-        SortField<String> sortField = ascending ? field.asc() : field.desc();
-        
-        return selectJoin.orderBy(sortField);
-    }
-    
-    /**
-     * Process the results ({contactId, name, type} tuples) into a list of ContactSummary objects
+     * Process the results ({contactId, firstName, middleInitial, lastName, type} tuples) into a 
+     * list of ContactSummary objects
      * 
      * @param results
      * @return
      */
-    private List<ContactSummary> processResults(Result<Record3<Integer, String, String>> results)
+    private List<ContactSummary> processResults(
+        Result<Record5<Integer, String, String, String, String>> results)
     {
         List<ContactSummary> out = new ArrayList<ContactSummary>();
-        for(Record3<Integer, String, String> result: results)
+        for(Record5<Integer, String, String, String, String> result: results)
         {
             ContactSummaryImpl summary = new ContactSummaryImpl();
             summary.setId(result.value1());
-            summary.setDisplayName(result.value2());
-            summary.setType(ContactType.fromCode(result.value3()));
+            summary.setFirstName(result.value2());
+            summary.setMiddleInitial(result.value3());
+            summary.setLastName(result.value4());
+            summary.setType(ContactType.fromCode(result.value5()));
             out.add(summary);
         }
         return out;

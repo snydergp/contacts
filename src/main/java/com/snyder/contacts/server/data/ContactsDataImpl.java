@@ -16,7 +16,6 @@ import org.jooq.h2.generated.tables.records.ContactRecord;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.snyder.contacts.shared.model.Contact;
-import com.snyder.contacts.shared.model.ContactSort;
 import com.snyder.contacts.shared.model.ContactSummary;
 
 /**
@@ -220,14 +219,13 @@ public class ContactsDataImpl extends DataImpl implements ContactsData
     }
 
 	@Override
-    public List<ContactSummary> getContacts(ContactSort field, boolean ascending, int startingAt,
-        int limit)
+    public List<ContactSummary> getContacts()
     {
 		TransactionContext transactionContext = this.getTransactionContext();
 		try
 		{
     	    DSLContext context = transactionContext.getContext();
-    	    return summaryData.getContacts(context, field, ascending, startingAt, limit);
+    	    return summaryData.getContacts(context);
 		}
 		finally
 		{

@@ -3,15 +3,26 @@
  */
 package com.snyder.contacts.shared.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+
+
 /**
  * 
  * @author greg
  */
 public class ContactSummaryImpl implements ContactSummary
 {
+    
+    private static final Joiner NAME_JOINER = Joiner.on(' ');
 	
 	private int id = -1;
-	private String displayName;
+    private String firstName;
+    private String middleInitial;
+    private String lastName;
 	private ContactType type;
     
     public ContactSummaryImpl()
@@ -22,7 +33,9 @@ public class ContactSummaryImpl implements ContactSummary
     public ContactSummaryImpl(ContactSummary copy)
     {
     	this.id = copy.getId();
-    	this.displayName = copy.getDisplayName();
+    	this.firstName = copy.getFirstName();
+    	this.middleInitial = copy.getMiddleInitial();
+    	this.lastName = copy.getLastName();
     	this.type = copy.getType();
     }
 
@@ -35,17 +48,37 @@ public class ContactSummaryImpl implements ContactSummary
 	{
 		this.id = id;
 	}
-
-	public String getDisplayName()
-	{
-		return displayName;
-	}
     
-    public void setDisplayName(String displayName)
+    public String getFirstName()
     {
-        this.displayName = displayName;
+        return firstName;
     }
     
+    public void setFirstName(String firstName)
+    {
+        this.firstName = firstName;
+    }
+    
+    public String getMiddleInitial()
+    {
+        return middleInitial;
+    }
+    
+    public void setMiddleInitial(String middleInitial)
+    {
+        this.middleInitial = middleInitial;
+    }
+    
+    public String getLastName()
+    {
+        return lastName;
+    }
+    
+    public void setLastName(String lastName)
+    {
+        this.lastName = lastName;
+    }
+
     public ContactType getType()
     {
         return type;
@@ -54,6 +87,53 @@ public class ContactSummaryImpl implements ContactSummary
     public void setType(ContactType type)
     {
         this.type = type;
+    }
+
+    @Override
+    public String toDisplay(ContactSort sort)
+    {
+        switch(type)
+        {
+            case PERSON:
+                List<String> names = new ArrayList<String>(3);
+                switch(sort)
+                {
+                    case FIRST_NAME:
+                        if(!Strings.isNullOrEmpty(firstName))
+                        {
+                            names.add(firstName);
+                        }
+                        if(!Strings.isNullOrEmpty(middleInitial))
+                        {
+                            names.add(middleInitial + ".");
+                        }
+                        if(!Strings.isNullOrEmpty(lastName))
+                        {
+                            names.add(lastName);
+                        }
+                        return NAME_JOINER.join(names);
+                    case LAST_NAME:
+                        if(!Strings.isNullOrEmpty(lastName))
+                        {
+                            names.add(lastName + ",");
+                        }
+                        if(!Strings.isNullOrEmpty(firstName))
+                        {
+                            names.add(firstName);
+                        }
+                        if(!Strings.isNullOrEmpty(middleInitial))
+                        {
+                            names.add(middleInitial + ".");
+                        }
+                        return NAME_JOINER.join(names);
+                    default: 
+                        throw new IllegalStateException();
+                }
+            case BUSINESS:
+                return firstName;
+            default: 
+                throw new IllegalStateException();
+        }
     }
 
 }

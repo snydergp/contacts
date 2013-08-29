@@ -45,13 +45,3 @@ CREATE TABLE contacts_data.email (
 	email_type VARCHAR(32),
 	email VARCHAR(1024)
 );
-
-CREATE VIEW contacts_data.name_by_first AS
-    SELECT contact_id, first_name + ' ' + last_name AS name, 'P' AS type FROM contacts_data.person
-    UNION
-    SELECT contact_id, name, 'B' AS type FROM contacts_data.business;
-
-CREATE VIEW contacts_data.name_by_last AS
-    SELECT contact_id, last_name + ', ' + first_name AS name, 'P' AS type FROM contacts_data.person
-    UNION
-    SELECT contact_id, name, 'B' AS type FROM contacts_data.business;

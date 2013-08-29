@@ -20,10 +20,8 @@ public class BusinessDataImpl implements BusinessData
 	
 	private static final org.jooq.h2.generated.tables.Business BUSINESS = 
 		org.jooq.h2.generated.tables.Business.BUSINESS;
-	private static final Field<Integer> CONTACT_ID =
-		org.jooq.h2.generated.tables.Business.BUSINESS.CONTACT_ID;
-	private static final Field<String> NAME =
-		org.jooq.h2.generated.tables.Business.BUSINESS.NAME;
+	private static final Field<Integer> CONTACT_ID = BUSINESS.CONTACT_ID;
+	private static final Field<String> NAME = BUSINESS.NAME;
 
     @Override
     public boolean isSubtypeInstance(Contact contact)

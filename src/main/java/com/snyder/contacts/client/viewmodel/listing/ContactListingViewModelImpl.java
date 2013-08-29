@@ -25,8 +25,6 @@ import com.snyder.state.store.StoreOrderer;
  */
 public class ContactListingViewModelImpl implements ContactListingViewModel
 {
-	
-	private static final int LOAD_LIMIT = 100;
 
 	private final ContactServer server;
 	private final MutableNonNullState<ContactSort> contactSort = 
@@ -64,8 +62,7 @@ public class ContactListingViewModelImpl implements ContactListingViewModel
 	@Override
 	public void loadMore()
 	{
-		server.getContacts(contactStore.getItems().size(), contactSort.get(), ascending.get(), 
-			LOAD_LIMIT, new StoreLoadCB(), null);
+		server.getContacts(new StoreLoadCB(), null);
 	}
 
 	/**
@@ -147,7 +144,8 @@ public class ContactListingViewModelImpl implements ContactListingViewModel
 		@Override
         public int compare(ContactSummary o1, ContactSummary o2)
         {
-	        return o1.getDisplayName().compareTo(o2.getDisplayName());
+		    ContactSort currentSort = contactSort.get();
+	        return o1.toDisplay(currentSort).compareTo(o2.toDisplay(currentSort));
         }
 		
 	}
@@ -161,7 +159,8 @@ public class ContactListingViewModelImpl implements ContactListingViewModel
 		@Override
         public int compare(ContactSummary o1, ContactSummary o2)
         {
-	        return o2.getDisplayName().compareTo(o1.getDisplayName());
+            ContactSort currentSort = contactSort.get();
+            return o2.toDisplay(currentSort).compareTo(o1.toDisplay(currentSort));
         }
 		
 	}

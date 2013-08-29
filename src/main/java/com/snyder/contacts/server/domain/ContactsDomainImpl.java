@@ -7,7 +7,6 @@ import com.google.common.collect.ImmutableList.Builder;
 import com.snyder.contacts.server.data.ContactsData;
 import com.snyder.contacts.server.exceptions.InvalidContactException;
 import com.snyder.contacts.shared.model.Contact;
-import com.snyder.contacts.shared.model.ContactSort;
 import com.snyder.contacts.shared.model.ContactSummary;
 import com.snyder.contacts.shared.model.validation.ContactValidation;
 
@@ -77,8 +76,7 @@ public class ContactsDomainImpl implements ContactsDomain
     }
 
     @Override
-    public List<ContactSummary> getContacts(ContactSort field, boolean ascending, int startingAtId,
-        int limit)
+    public List<ContactSummary> getContacts()
     {
         // TODO Auto-generated method stub
         return null;

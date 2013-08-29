@@ -13,7 +13,6 @@ import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.snyder.contacts.server.domain.ContactsDomain;
-import com.snyder.contacts.shared.model.ContactSort;
 import com.snyder.contacts.shared.model.ContactSummary;
 
 
@@ -36,12 +35,7 @@ public class ContactSummaryServlet extends HttpServlet
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
         IOException
     {
-        ContactSort sort = ContactSort.valueOf(req.getParameter("contactSort"));
-        boolean ascending = Boolean.parseBoolean(req.getParameter("ascending"));
-        int startingAt = Integer.parseInt(req.getParameter("startingAt"));
-        int limit = Integer.parseInt(req.getParameter("limit"));
-        
-        List<ContactSummary> summaries = domain.getContacts(sort, ascending, startingAt, limit);
+        List<ContactSummary> summaries = domain.getContacts();
         
         String summariesJson = 
             GSON.toJson(summaries, TypeToken.get(ContactSummary.class).getType());
