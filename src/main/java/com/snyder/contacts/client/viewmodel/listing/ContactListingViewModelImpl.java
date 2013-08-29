@@ -4,20 +4,22 @@
 package com.snyder.contacts.client.viewmodel.listing;
 
 import java.util.Comparator;
-import java.util.List;
 
-import com.google.common.base.Function;
-import com.snyder.contacts.client.serverinterface.Callback;
-import com.snyder.contacts.client.serverinterface.ContactServer;
+import com.snyder.contacts.client.viewmodel.ContactSelection;
 import com.snyder.contacts.shared.model.ContactSort;
 import com.snyder.contacts.shared.model.ContactSummary;
+import com.snyder.state.BaseMutableState;
+import com.snyder.state.MutableState;
 import com.snyder.state.State;
 import com.snyder.state.StateObserver;
-import com.snyder.state.list.OrderedStoreView;
+import com.snyder.state.list.OrderedStore;
 import com.snyder.state.nonnull.BaseMutableNonNullState;
 import com.snyder.state.nonnull.MutableNonNullState;
-import com.snyder.state.store.BaseStore;
+import com.snyder.state.store.MappingStore;
+import com.snyder.state.store.StoreMapping;
 import com.snyder.state.store.StoreOrderer;
+import com.snyder.state.store.Store;
+import com.snyder.state.util.Mapping;
 
 /**
  * 
@@ -26,26 +28,34 @@ import com.snyder.state.store.StoreOrderer;
 public class ContactListingViewModelImpl implements ContactListingViewModel
 {
 
-	private final ContactServer server;
+    private final Store<ContactSummary> store;
+	private final ContactSelection selection;
 	private final MutableNonNullState<ContactSort> contactSort = 
 		new BaseMutableNonNullState<ContactSort>(ContactSort.FIRST_NAME);
 	private final MutableNonNullState<Boolean> ascending = 
 		new BaseMutableNonNullState<Boolean>(Boolean.TRUE);
-	private final BaseStore<ContactSummaryViewModel, Integer> contactStore = 
-		new BaseStore<ContactSummaryViewModel, Integer>(new ContactIdFunction());
-	private final StoreOrderer<ContactSummaryViewModel> orderedContacts = 
-		new StoreOrderer<ContactSummaryViewModel>(contactStore, new AscendingNameComparator());
+	private final Store<ContactSummaryViewModel> viewModelStore;
+	private final StoreOrderer<ContactSummaryViewModel> orderedContacts;
+	private final Mapping<Integer, ContactSummaryViewModel> contactSummaryMapping;
 	
-	public ContactListingViewModelImpl(ContactServer server)
+	public ContactListingViewModelImpl(Store<ContactSummary> store, ContactSelection selection)
 	{
-		this.server = server;
+	 
+	    this.store = store;
+		this.selection = selection;
+		
+		viewModelStore = new MappingStore<ContactSummary, ContactSummaryViewModel>(store, 
+		    new ViewModelMapping());
+		orderedContacts = new StoreOrderer<ContactSummaryViewModel>(viewModelStore, 
+		    new AscendingNameComparator());
+		contactSummaryMapping = new StoreMapping<Integer, ContactSummaryViewModel>(viewModelStore, 
+		    new IdMapping());
+		
+		selection.getSelectedContactId().addObserver(new SelectionObserver());
 		
 		SortChangeObserver sortObserver = new SortChangeObserver();
 		contactSort.addObserver(sortObserver);
 		ascending.addObserver(sortObserver);
-		
-		// Do initial load
-        server.getContacts(new StoreLoadCB(), null);
 	}
 	
 	@Override
@@ -55,43 +65,31 @@ public class ContactListingViewModelImpl implements ContactListingViewModel
 	}
 
 	@Override
-	public OrderedStoreView<ContactSummaryViewModel> getContactListing()
+	public OrderedStore<ContactSummaryViewModel> getContactListing()
 	{
 	    return orderedContacts;
 	}
-
-	@Override
-	public void loadMore()
-	{
-		server.getContacts(new StoreLoadCB(), null);
-	}
-
-	/**
-	 * Callback used to load data into a store
-	 */
-	private class StoreLoadCB implements Callback<List<ContactSummary>>
+	
+	private class IdMapping implements Mapping<ContactSummaryViewModel, Integer>
 	{
 
-		@Override
-        public void onSuccess(List<ContactSummary> value)
+        @Override
+        public Integer map(ContactSummaryViewModel t)
         {
-	        // TODO contactStore.add(new Covalue);
+            return t.getSummary().getId();
         }
-		
+	    
 	}
 	
-	/**
-	 * Maps a ContactSummary to its id
-	 */
-	private class ContactIdFunction implements Function<ContactSummaryViewModel, Integer>
+	private class ViewModelMapping implements Mapping<ContactSummary, ContactSummaryViewModel>
 	{
 
-		@Override
-        public Integer apply(ContactSummaryViewModel input)
+        @Override
+        public ContactSummaryViewModel map(ContactSummary t)
         {
-	        return input.getSummary().getId();
+            return new ContactSummaryViewModelImpl(t);
         }
-		
+	    
 	}
 	
 	/**
@@ -144,6 +142,70 @@ public class ContactListingViewModelImpl implements ContactListingViewModel
                 o1.getSummary().toDisplay(currentSort));
         }
 		
+	}
+	
+	private class SelectionObserver implements StateObserver<Integer>
+	{
+
+        @Override
+        public void
+            stateChanged(State<? extends Integer> state, Integer oldValue, Integer newValue)
+        {
+            if(oldValue != null)
+            {
+                ContactSummaryViewModel viewModel = contactSummaryMapping.map(oldValue);
+                if(viewModel != null)
+                {
+                    ((ContactSummaryViewModelImpl) viewModel).selected.set(false);
+                }
+            }
+            if(newValue != null)
+            {
+                ContactSummaryViewModel viewModel = contactSummaryMapping.map(newValue);
+                if(viewModel != null)
+                {
+                    ((ContactSummaryViewModelImpl) viewModel).selected.set(true);
+                }
+            }
+        }
+	    
+	}
+	
+	private class ContactSummaryViewModelImpl implements ContactSummaryViewModel
+	{
+	    
+	    private final ContactSummary summary;
+	    private final MutableState<Boolean> selected = new BaseMutableState<Boolean>(Boolean.FALSE);
+
+        public ContactSummaryViewModelImpl(ContactSummary summary)
+        {
+            this.summary = summary;
+            
+            // If this view model represents the current selection, set the selected state
+            if(Integer.valueOf(summary.getId()).equals(selection.getSelectedContactId()))
+            {
+                selected.set(Boolean.TRUE);
+            }
+        }
+
+        @Override
+        public ContactSummary getSummary()
+        {
+            return summary;
+        }
+
+        @Override
+        public void view()
+        {
+            selection.displayContact(summary.getId());
+        }
+
+        @Override
+        public State<Boolean> isSelected()
+        {
+            return selected;
+        }
+	    
 	}
 	
 }
