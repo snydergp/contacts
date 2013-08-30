@@ -19,6 +19,33 @@ public class ContactSummaryImpl implements ContactSummary
 {
     
     private static final Joiner NAME_JOINER = Joiner.on(' ');
+    
+    public static ContactSummaryImpl fromContact(Contact contact)
+    {
+        ContactSummaryImpl summary = new ContactSummaryImpl();
+        summary.setId(contact.getId());
+        if(contact instanceof Person)
+        {
+            summary.setType(ContactType.PERSON);
+            Person person = (Person) contact;
+            summary.setFirstName(person.getFirstName());
+            summary.setMiddleInitial(person.getMiddleInitial());
+            summary.setLastName(person.getLastName());
+        }
+        else if(contact instanceof Business)
+        {
+            summary.setType(ContactType.BUSINESS);
+            Business business = (Business) contact;
+            summary.setFirstName(business.getName());
+            summary.setMiddleInitial("");
+            summary.setLastName("");
+        }
+        else
+        {
+            throw new IllegalStateException("Unknown contact subtype");
+        }
+        return summary;
+    }
 
     @SerializedName("i")
 	private int id = -1;

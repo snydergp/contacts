@@ -9,8 +9,11 @@ import com.snyder.contacts.client.viewmodel.editcontact.EditContactViewModel;
 import com.snyder.contacts.client.viewmodel.listing.ContactListingViewModel;
 import com.snyder.contacts.client.viewmodel.listing.ContactListingViewModelImpl;
 import com.snyder.contacts.client.viewmodel.shared.DialogViewModel;
+import com.snyder.contacts.shared.exceptions.InvalidContactException;
 import com.snyder.contacts.shared.model.Contact;
+import com.snyder.contacts.shared.model.ContactImpl;
 import com.snyder.contacts.shared.model.ContactSummary;
+import com.snyder.contacts.shared.model.ContactSummaryImpl;
 import com.snyder.modifiable.undo.ModificationManager;
 import com.snyder.modifiable.undo.UndoControls;
 import com.snyder.state.BaseMutableState;
@@ -116,12 +119,19 @@ public class MainViewModelImpl implements MainViewModel
         }
 
         @Override
-        public void save(ErrorHandler onFailure)
+        public void save(ErrorHandler<InvalidContactException> onFailure)
         {
             if(modifiableContact.getValidator().isValidState().get())
             {
                 Contact toSave = modifiableContact.getModified();
-                server.updateContact(toSave, new UpdateContactCallback(toSave), onFailure);
+                if(toSave.getId() == Contact.NEW_CONTACT_ID)
+                {
+                    server.createContact(toSave, new CreateContactCallback(toSave), onFailure);
+                }
+                else
+                {
+                    server.updateContact(toSave, new UpdateContactCallback(toSave), onFailure);
+                }
             }
         }
 
@@ -129,6 +139,27 @@ public class MainViewModelImpl implements MainViewModel
         public void cancel()
         {
             displayMode.set(DisplayMode.DISPLAY);
+        }
+        
+    }
+    
+    private class CreateContactCallback implements Callback<Integer>
+    {
+        
+        private final Contact saved;
+        
+        public CreateContactCallback(Contact saved)
+        {
+            this.saved = saved;
+        }
+
+        @Override
+        public void onSuccess(Integer value)
+        {
+            ((ContactImpl) saved).setId(value); 
+            loadedContact = saved;
+            displayMode.set(DisplayMode.DISPLAY);
+            store.add(ContactSummaryImpl.fromContact(saved));
         }
         
     }

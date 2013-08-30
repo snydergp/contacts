@@ -11,6 +11,11 @@ import java.util.List;
  */
 public interface Contact
 {
+    
+    /**
+     * The ID used to indicate a new contact
+     */
+    public static final int NEW_CONTACT_ID = -1;
 
 	int getId();
 	

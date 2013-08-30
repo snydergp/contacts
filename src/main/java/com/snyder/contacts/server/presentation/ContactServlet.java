@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.snyder.contacts.server.domain.ContactsDomain;
-import com.snyder.contacts.server.exceptions.InvalidContactException;
+import com.snyder.contacts.shared.exceptions.InvalidContactException;
 import com.snyder.contacts.shared.model.Business;
 import com.snyder.contacts.shared.model.Contact;
 import com.snyder.contacts.shared.model.ContactType;

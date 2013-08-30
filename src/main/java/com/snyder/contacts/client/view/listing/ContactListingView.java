@@ -1,6 +1,8 @@
 package com.snyder.contacts.client.view.listing;
 
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -23,6 +25,60 @@ import com.snyder.state.util.Mapping;
 public class ContactListingView implements IsWidget
 {
     private static final int CONTACT_HEIGHT = 50;
+    
+    private static class ViewMapper implements Mapping<ContactSummaryViewModel, ContactView>
+    {
+
+        @Override
+        public ContactView map(ContactSummaryViewModel viewModel)
+        {
+            return new ContactView(viewModel);
+        }
+        
+    }
+
+    public static class ContactView implements IsWidget, ClickHandler, StateObserver<Boolean>
+    {
+        
+        private final ContactSummaryViewModel viewModel;
+        private final FlowLayoutContainer view = new FlowLayoutContainer();
+        
+        public ContactView(ContactSummaryViewModel viewModel)
+        {
+            this.viewModel = viewModel;
+            
+            view.add(new Label(viewModel.getSummary().toDisplay(ContactSort.FIRST_NAME)));
+            
+            view.setHeight(45);
+            view.getElement().getStyle().setMarginBottom(5, Unit.PX);
+            
+            viewModel.isSelected().addObserver(this, true);
+            
+            view.addHandler(this, ClickEvent.getType());
+        }
+
+        @Override
+        public Widget asWidget()
+        {
+            return view;
+        }
+
+        @Override
+        public void stateChanged(State<? extends Boolean> state, Boolean oldValue, Boolean newValue)
+        {
+            // TODO update the view depending on whether this item is selected
+        }
+
+        @Override
+        public void onClick(ClickEvent event)
+        {
+            if(!viewModel.isSelected().get())
+            {
+                viewModel.view();
+            }
+        }
+        
+    }
     
     private final FlowLayoutContainer view = new FlowLayoutContainer();
     
@@ -78,38 +134,6 @@ public class ContactListingView implements IsWidget
             stateChanged(State<? extends Integer> state, Integer oldValue, Integer newValue)
         {
             view.getElement().getStyle().setMarginBottom(newValue.doubleValue(), Unit.PX);
-        }
-        
-    }
-    
-    private static class ViewMapper implements Mapping<ContactSummaryViewModel, ContactView>
-    {
-
-        @Override
-        public ContactView map(ContactSummaryViewModel viewModel)
-        {
-            return new ContactView(viewModel);
-        }
-        
-    }
-
-    public static class ContactView implements IsWidget
-    {
-        
-        private final FlowLayoutContainer view = new FlowLayoutContainer();
-
-        public ContactView(ContactSummaryViewModel viewModel)
-        {
-            this.view.add(new Label(viewModel.getSummary().toDisplay(ContactSort.FIRST_NAME)));
-            
-            this.view.setHeight(45);
-            this.view.getElement().getStyle().setMarginBottom(5, Unit.PX);
-        }
-
-        @Override
-        public Widget asWidget()
-        {
-            return view;
         }
         
     }

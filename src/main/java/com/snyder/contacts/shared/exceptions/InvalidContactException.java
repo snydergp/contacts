@@ -1,4 +1,4 @@
-package com.snyder.contacts.server.exceptions;
+package com.snyder.contacts.shared.exceptions;
 
 import java.util.ArrayList;
 import java.util.List;

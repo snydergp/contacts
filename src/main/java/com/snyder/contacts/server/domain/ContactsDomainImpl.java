@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.snyder.contacts.server.data.ContactsData;
-import com.snyder.contacts.server.exceptions.InvalidContactException;
+import com.snyder.contacts.shared.exceptions.InvalidContactException;
 import com.snyder.contacts.shared.model.Contact;
 import com.snyder.contacts.shared.model.ContactSummary;
 import com.snyder.contacts.shared.model.validation.ContactValidation;

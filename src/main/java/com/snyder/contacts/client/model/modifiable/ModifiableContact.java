@@ -23,11 +23,10 @@ import com.snyder.contacts.shared.model.validation.ContactValidation;
 import com.snyder.contacts.shared.model.validation.PersonValidation;
 import com.snyder.modifiable.Modifiable;
 import com.snyder.modifiable.approved.ModificationApprover;
+import com.snyder.modifiable.list.ModifiableListControl;
 import com.snyder.modifiable.validation.ValidatedApprovedCompositeModifiable;
 import com.snyder.modifiable.validation.ValidatedApprovedLeafModifiable;
 import com.snyder.review.shared.validator.algorithm.NullValidation;
-import com.snyder.state.BaseMutableState;
-import com.snyder.state.MutableState;
 import com.snyder.state.State;
 import com.snyder.state.StateObserver;
 
@@ -35,12 +34,10 @@ import com.snyder.state.StateObserver;
 public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Contact>
 {
     
-    private final MutableState<ValidatedApprovedCompositeModifiable<? extends Contact>> subtype = 
-        new BaseMutableState<ValidatedApprovedCompositeModifiable<? extends Contact>>();
     private final 
-    Map<ContactType, ValidatedApprovedCompositeModifiable<? extends Contact>> subtypeMap = 
-        new EnumMap<ContactType, ValidatedApprovedCompositeModifiable<? extends Contact>>(
-            ContactType.class);
+        Map<ContactType, ValidatedApprovedCompositeModifiable<? extends Contact>> subtypeMap = 
+            new EnumMap<ContactType, ValidatedApprovedCompositeModifiable<? extends Contact>>(
+                ContactType.class);
     private final ValidatedApprovedLeafModifiable<ContactType> typeSelector;
     private final ValidatedApprovedLeafModifiable<String> info;
     private final ValidatedListControls<Address, ModifiableAddress> addresses;
@@ -117,12 +114,14 @@ public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Cont
         ContactImpl mod;
         if(typeSelector.getModified() == ContactType.PERSON)
         {
-            ModifiablePerson modifiablePerson = (ModifiablePerson) subtype.get();
+            ModifiablePerson modifiablePerson = 
+                (ModifiablePerson) subtypeMap.get(ContactType.PERSON);
             mod = new PersonImpl(modifiablePerson.getModified());
         }
         else if(typeSelector.getModified() == ContactType.BUSINESS)
         {
-            ModifiableBusiness modifiableBusiness = (ModifiableBusiness) subtype.get();
+            ModifiableBusiness modifiableBusiness = 
+                (ModifiableBusiness) subtypeMap.get(ContactType.BUSINESS);
             mod = new BusinessImpl(modifiableBusiness.getModified());
         }
         else
@@ -149,9 +148,14 @@ public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Cont
         return mod;
     }
     
-    public MutableState<ValidatedApprovedCompositeModifiable<? extends Contact>> getSubtype()
+    public ModifiablePerson getPerson()
     {
-        return subtype;
+        return (ModifiablePerson) subtypeMap.get(ContactType.PERSON);
+    }
+    
+    public ModifiableBusiness getBusiness()
+    {
+        return (ModifiableBusiness) subtypeMap.get(ContactType.BUSINESS);
     }
     
     public ValidatedApprovedLeafModifiable<ContactType> getType()
@@ -164,17 +168,17 @@ public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Cont
         return info;
     }
     
-    public ValidatedListControls<Address, ModifiableAddress> getAddresses()
+    public ModifiableListControl<ModifiableAddress> getAddresses()
     {
         return addresses;
     }
     
-    public ValidatedListControls<PhoneNumber, ModifiablePhoneNumber> getPhoneNumbers()
+    public ModifiableListControl<ModifiablePhoneNumber> getPhoneNumbers()
     {
         return phoneNumbers;
     }
     
-    public ValidatedListControls<EmailAddress, ModifiableEmailAddress> getEmailAddresses()
+    public ModifiableListControl<ModifiableEmailAddress> getEmailAddresses()
     {
         return emailAddresses;
     }
@@ -325,7 +329,8 @@ public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Cont
         public void stateChanged(State<? extends ContactType> state, ContactType oldValue,
             ContactType newValue)
         {
-            ValidatedApprovedCompositeModifiable<? extends Contact> previous = subtype.get();
+            ValidatedApprovedCompositeModifiable<? extends Contact> previous = 
+                subtypeMap.get(oldValue);
             if(previous != null)
             {
                 ModifiableContact.this.removeChild(previous);
@@ -335,7 +340,6 @@ public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Cont
                 subtypeMap.get(newValue);
             ModifiableContact.this.addChild(current);
             ModifiableContact.this.validator.addChildValidator(current.getValidator());
-            subtype.set(current);
         }
         
     }
