@@ -1,0 +1,18 @@
+.row
+{
+	margin-bottom: 5px;
+}
+
+.label
+{
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+
+.field
+{
+	position: relative;
+	left: 120px;
+	margin-right: 120px;
+}
