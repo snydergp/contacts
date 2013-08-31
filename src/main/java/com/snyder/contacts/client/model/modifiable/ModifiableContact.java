@@ -154,6 +154,16 @@ public class ModifiableContact extends ValidatedApprovedCompositeModifiable<Cont
         return mod;
     }
     
+    public ModifiablePerson getPerson()
+    {
+        return modifiablePerson;
+    }
+    
+    public ModifiableBusiness getBusiness()
+    {
+        return modifiableBusiness;
+    }
+    
     /**
      * @return A leaf modifiable representing the subtype of the {@link Contact}.  When the type is
      * set to {@value ContactType#PERSON}, the {@link ModifiablePerson} instance accessed through

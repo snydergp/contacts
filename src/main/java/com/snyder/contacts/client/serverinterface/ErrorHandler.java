@@ -7,9 +7,9 @@ package com.snyder.contacts.client.serverinterface;
  * 
  * @author greg
  */
-public interface ErrorHandler
+public interface ErrorHandler<T extends Throwable>
 {
 	
-	void onFailure(Throwable t);
+	void onFailure(T thowable);
 	
 }

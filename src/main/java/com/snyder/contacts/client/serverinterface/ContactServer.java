@@ -5,6 +5,7 @@ package com.snyder.contacts.client.serverinterface;
 
 import java.util.List;
 
+import com.snyder.contacts.shared.exceptions.InvalidContactException;
 import com.snyder.contacts.shared.model.Contact;
 import com.snyder.contacts.shared.model.ContactSummary;
 
@@ -21,8 +22,8 @@ public interface ContactServer
     
     void getContact(int id, Callback<Contact> callback, ErrorHandler errorHandler);
     
-    void updateContact(Contact contact, Callback<Void> callback, ErrorHandler errorHandler);
+    void updateContact(Contact contact, Callback<Void> callback, ErrorHandler<InvalidContactException> errorHandler);
     
-    void deleteContact(int id, Callback<Void> callback, ErrorHandler errorHandler);
+    void deleteContact(int id, Callback<Void> callback, ErrorHandler<InvalidContactException> errorHandler);
 	
 }

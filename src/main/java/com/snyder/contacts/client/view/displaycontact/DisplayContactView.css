@@ -1,0 +1,24 @@
+.actionContainer
+{
+	float: right;
+}
+        
+.actionContainerItem
+{
+	cursor: pointer;
+}
+
+.typeContentTypeLabel
+{
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+        
+.typeContentContentContainer
+{
+	position: relative;
+	left: 150px;
+	margin-right: 150px;
+	text-align: right;
+}

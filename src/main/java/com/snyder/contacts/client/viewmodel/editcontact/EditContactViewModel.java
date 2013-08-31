@@ -2,6 +2,7 @@ package com.snyder.contacts.client.viewmodel.editcontact;
 
 import com.snyder.contacts.client.model.modifiable.ModifiableContact;
 import com.snyder.contacts.client.serverinterface.ErrorHandler;
+import com.snyder.contacts.shared.exceptions.InvalidContactException;
 import com.snyder.modifiable.undo.UndoControls;
 
 
@@ -12,7 +13,7 @@ public interface EditContactViewModel
     
     UndoControls getUndoControls();
     
-    void save(ErrorHandler onFailure);
+    void save(ErrorHandler<InvalidContactException> onFailure);
     
     void cancel();
     
