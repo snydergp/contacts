@@ -18,22 +18,23 @@ public class ContactImpl implements Contact
 	private final List<Address> addresses = new ArrayList<Address>();
 	private final List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
 	private final List<EmailAddress> emailAddresses = new ArrayList<EmailAddress>();
-	
+
 	public ContactImpl()
 	{
-		
+
 	}
-	
+
 	public ContactImpl(Contact copy)
 	{
-    	this.id = copy.getId();
-    	this.info = copy.getInfo();
+		this.id = copy.getId();
+		this.info = copy.getInfo();
 		this.addresses.addAll(copy.getAddresses());
 		this.phoneNumbers.addAll(copy.getPhoneNumbers());
 		this.emailAddresses.addAll(copy.getEmailAddresses());
 	}
-    
-    public int getId()
+
+	@Override
+	public int getId()
 	{
 		return id;
 	}
@@ -43,6 +44,7 @@ public class ContactImpl implements Contact
 		this.id = id;
 	}
 
+	@Override
 	public String getInfo()
 	{
 		return info;
@@ -53,19 +55,22 @@ public class ContactImpl implements Contact
 		this.info = info;
 	}
 
+	@Override
 	public List<Address> getAddresses()
 	{
 		return addresses;
 	}
 
+	@Override
 	public List<PhoneNumber> getPhoneNumbers()
 	{
 		return phoneNumbers;
 	}
 
+	@Override
 	public List<EmailAddress> getEmailAddresses()
 	{
 		return emailAddresses;
 	}
-	
+
 }

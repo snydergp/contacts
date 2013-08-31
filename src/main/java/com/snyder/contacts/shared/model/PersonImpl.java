@@ -3,7 +3,6 @@
  */
 package com.snyder.contacts.shared.model;
 
-
 /**
  * 
  * @author greg
@@ -15,12 +14,12 @@ public class PersonImpl extends ContactImpl implements Person
 	private String firstName;
 	private String middleInitial;
 	private String lastName;
-	
+
 	public PersonImpl()
 	{
-		
+
 	}
-	
+
 	public PersonImpl(Person copy)
 	{
 		super(copy);
@@ -30,6 +29,7 @@ public class PersonImpl extends ContactImpl implements Person
 		this.lastName = copy.getLastName();
 	}
 
+	@Override
 	public Title getTitle()
 	{
 		return title;
@@ -40,6 +40,7 @@ public class PersonImpl extends ContactImpl implements Person
 		this.title = title;
 	}
 
+	@Override
 	public String getFirstName()
 	{
 		return firstName;
@@ -50,6 +51,7 @@ public class PersonImpl extends ContactImpl implements Person
 		this.firstName = firstName;
 	}
 
+	@Override
 	public String getMiddleInitial()
 	{
 		return middleInitial;
@@ -60,6 +62,7 @@ public class PersonImpl extends ContactImpl implements Person
 		this.middleInitial = middleInitial;
 	}
 
+	@Override
 	public String getLastName()
 	{
 		return lastName;
@@ -69,6 +72,5 @@ public class PersonImpl extends ContactImpl implements Person
 	{
 		this.lastName = lastName;
 	}
-	
-	
+
 }

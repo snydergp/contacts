@@ -16,7 +16,7 @@ import com.snyder.modifiable.validation.ValidatedApprovedCompositeModifiable;
  */
 public class ModifiableEmailAddress extends ValidatedApprovedCompositeModifiable<EmailAddress>
 {
-	
+
 	private final LeafModifiable<String> type;
 	private final LeafModifiable<String> email;
 
@@ -24,20 +24,20 @@ public class ModifiableEmailAddress extends ValidatedApprovedCompositeModifiable
 	 * @param initial
 	 * @param approver
 	 */
-    public ModifiableEmailAddress(EmailAddress initial, ModificationApprover approver)
-    {
-	    super(initial, approver);
-	    type = this.buildLeaf(initial.getType(), EmailAddressValidation.TYPE);
-	    email = this.buildLeaf(initial.getEmail(), EmailAddressValidation.EMAIL);
-    }
+	public ModifiableEmailAddress(EmailAddress initial, ModificationApprover approver)
+	{
+		super(initial, approver);
+		type = this.buildLeaf(initial.getType(), EmailAddressValidation.TYPE);
+		email = this.buildLeaf(initial.getEmail(), EmailAddressValidation.EMAIL);
+	}
 
 	@Override
-    public EmailAddress getModified()
-    {
-	    EmailAddressImpl mod = new EmailAddressImpl(getCurrent());
-	    mod.setType(type.getModified());
-	    mod.setEmail(email.getModified());
-	    return mod;
-    }
+	public EmailAddress getModified()
+	{
+		EmailAddressImpl mod = new EmailAddressImpl(getCurrent());
+		mod.setType(type.getModified());
+		mod.setEmail(email.getModified());
+		return mod;
+	}
 
 }

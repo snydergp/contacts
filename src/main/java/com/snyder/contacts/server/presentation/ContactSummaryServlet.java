@@ -15,34 +15,33 @@ import com.google.inject.Singleton;
 import com.snyder.contacts.server.domain.ContactsDomain;
 import com.snyder.contacts.shared.model.ContactSummary;
 
-
 @Singleton
 public class ContactSummaryServlet extends HttpServlet
 {
-    private static final long serialVersionUID = 1L;
-    
-    private static final Gson GSON = new Gson();
-    
-    private final ContactsDomain domain;
+	private static final long serialVersionUID = 1L;
 
-    @Inject
-    public ContactSummaryServlet(ContactsDomain domain)
-    {
-        this.domain = domain;
-    }
+	private static final Gson GSON = new Gson();
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
-        IOException
-    {
-        List<ContactSummary> summaries = domain.getContacts();
-        
-        String summariesJson = 
-            GSON.toJson(summaries, TypeToken.get(ContactSummary.class).getType());
-        
-        resp.setStatus(HttpServletResponse.SC_OK);
-        resp.setContentLength(summariesJson.length());
-        resp.getWriter().append(summariesJson);
-    }
-    
+	private final ContactsDomain domain;
+
+	@Inject
+	public ContactSummaryServlet(ContactsDomain domain)
+	{
+		this.domain = domain;
+	}
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
+	    IOException
+	{
+		List<ContactSummary> summaries = domain.getContacts();
+
+		String summariesJson =
+		    GSON.toJson(summaries, TypeToken.get(ContactSummary.class).getType());
+
+		resp.setStatus(HttpServletResponse.SC_OK);
+		resp.setContentLength(summariesJson.length());
+		resp.getWriter().append(summariesJson);
+	}
+
 }

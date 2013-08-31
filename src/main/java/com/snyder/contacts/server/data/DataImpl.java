@@ -16,90 +16,90 @@ import org.jooq.impl.DSL;
  * 
  * @author greg
  */
-public abstract class DataImpl 
+public abstract class DataImpl
 {
 
 	private final DataSource dataSource;
 	private final SQLDialect dialect;
-	
+
 	public DataImpl(DataSource dataSource, SQLDialect dialect)
 	{
 		this.dataSource = dataSource;
 		this.dialect = dialect;
 	}
-	
+
 	protected TransactionContext getTransactionContext() throws DataException
 	{
 		try
-        {
-	        return new TransactionContext();
-        }
-        catch (SQLException e)
-        {
-	        throw new DataException(e);
-        }
+		{
+			return new TransactionContext();
+		}
+		catch (SQLException e)
+		{
+			throw new DataException(e);
+		}
 	}
-	
+
 	/**
 	 * Associates a limited subset of connection controls (commit/rollback/close) to the connection
 	 * underlying a given DSLContext instance.
 	 * 
 	 * @author SnyderGP
 	 */
-	protected class TransactionContext //TODO when upgrading to java 7, implement AutoClosable
+	protected class TransactionContext // TODO when upgrading to java 7, implement AutoClosable
 	{
-		
+
 		private final Connection connection;
 		private final DSLContext context;
-		
+
 		public TransactionContext() throws SQLException
-        {
-	        connection = dataSource.getConnection();
-	        connection.setAutoCommit(false);
-	        context = DSL.using(connection, dialect);
-        }
+		{
+			connection = dataSource.getConnection();
+			connection.setAutoCommit(false);
+			context = DSL.using(connection, dialect);
+		}
 
 		public DSLContext getContext()
 		{
 			return context;
 		}
-		
+
 		public void commit() throws DataException
 		{
 			try
-            {
-	            connection.commit();
-            }
-	        catch (SQLException e)
-	        {
-		        throw new DataException(e);
-	        }
+			{
+				connection.commit();
+			}
+			catch (SQLException e)
+			{
+				throw new DataException(e);
+			}
 		}
-		
+
 		public void rollback() throws DataException
 		{
 			try
-            {
-	            connection.rollback();
-            }
-	        catch (SQLException e)
-	        {
-		        throw new DataException(e);
-	        }
+			{
+				connection.rollback();
+			}
+			catch (SQLException e)
+			{
+				throw new DataException(e);
+			}
 		}
-		
+
 		public void close() throws DataException
 		{
 			try
-            {
-	            connection.close();
-            }
-	        catch (SQLException e)
-	        {
-		        throw new DataException(e);
-	        }
+			{
+				connection.close();
+			}
+			catch (SQLException e)
+			{
+				throw new DataException(e);
+			}
 		}
-		
+
 	}
-	
+
 }

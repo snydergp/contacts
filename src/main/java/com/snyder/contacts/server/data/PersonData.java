@@ -11,5 +11,5 @@ import com.snyder.contacts.shared.model.Person;
  */
 public interface PersonData extends ContactSubtypeData<Person>
 {
-	
+
 }

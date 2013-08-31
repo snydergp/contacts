@@ -3,7 +3,6 @@
  */
 package com.snyder.contacts.shared.model;
 
-
 /**
  * Summarizes a contact
  * 
@@ -11,17 +10,17 @@ package com.snyder.contacts.shared.model;
  */
 public interface ContactSummary
 {
-	
+
 	int getId();
-	
+
 	String getFirstName();
-	
+
 	String getMiddleInitial();
-	
+
 	String getLastName();
-	
+
 	ContactType getType();
-	
+
 	String toDisplay(ContactSort sort);
-	
+
 }

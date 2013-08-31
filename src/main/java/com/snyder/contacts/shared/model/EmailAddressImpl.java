@@ -12,18 +12,19 @@ public class EmailAddressImpl implements EmailAddress
 
 	private String type;
 	private String email;
-	
+
 	public EmailAddressImpl()
 	{
-		
+
 	}
-	
+
 	public EmailAddressImpl(EmailAddress copy)
 	{
 		this.type = copy.getType();
 		this.email = copy.getEmail();
 	}
-	
+
+	@Override
 	public String getType()
 	{
 		return type;
@@ -34,6 +35,7 @@ public class EmailAddressImpl implements EmailAddress
 		this.type = type;
 	}
 
+	@Override
 	public String getEmail()
 	{
 		return email;
@@ -43,5 +45,5 @@ public class EmailAddressImpl implements EmailAddress
 	{
 		this.email = email;
 	}
-	
+
 }

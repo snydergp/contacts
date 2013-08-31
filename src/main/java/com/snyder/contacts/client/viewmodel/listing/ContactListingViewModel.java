@@ -13,9 +13,9 @@ import com.snyder.state.nonnull.MutableNonNullState;
  */
 public interface ContactListingViewModel
 {
-	
+
 	MutableNonNullState<ContactSort> getSortState();
 
 	OrderedStore<ContactSummaryViewModel> getContactListing();
-	
+
 }

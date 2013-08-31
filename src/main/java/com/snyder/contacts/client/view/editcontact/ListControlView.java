@@ -11,35 +11,35 @@ import com.snyder.state.util.Mapping;
 
 public class ListControlView<M> implements IsWidget
 {
-    
-    private final ModifiableListControl<M> listControl;
-    private final Mapping<M, IsWidget> viewMapping;
-    private final FlowLayoutContainer view = new FlowLayoutContainer();
 
-    public ListControlView(ModifiableListControl<M> listControl, Mapping<M, IsWidget> viewMapping)
-    {
-        this.listControl = listControl;
-        this.viewMapping = viewMapping;
-        
-        Label add = new Label("Add");
-        add.addClickHandler(new AddHandler());
-    }
+	private final ModifiableListControl<M> listControl;
+	private final Mapping<M, IsWidget> viewMapping;
+	private final FlowLayoutContainer view = new FlowLayoutContainer();
 
-    @Override
-    public Widget asWidget()
-    {
-        return view;
-    }
-    
-    private class AddHandler implements ClickHandler
-    {
+	public ListControlView(ModifiableListControl<M> listControl, Mapping<M, IsWidget> viewMapping)
+	{
+		this.listControl = listControl;
+		this.viewMapping = viewMapping;
 
-        @Override
-        public void onClick(ClickEvent event)
-        {
-            listControl.addItem();
-        }
-        
-    }
-    
+		Label add = new Label("Add");
+		add.addClickHandler(new AddHandler());
+	}
+
+	@Override
+	public Widget asWidget()
+	{
+		return view;
+	}
+
+	private class AddHandler implements ClickHandler
+	{
+
+		@Override
+		public void onClick(ClickEvent event)
+		{
+			listControl.addItem();
+		}
+
+	}
+
 }

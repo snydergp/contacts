@@ -9,7 +9,7 @@ package com.snyder.contacts.client.serverinterface;
  */
 public interface Callback<T>
 {
-	
+
 	void onSuccess(T value);
-	
+
 }

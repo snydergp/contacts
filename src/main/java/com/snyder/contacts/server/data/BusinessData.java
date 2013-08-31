@@ -11,5 +11,5 @@ import com.snyder.contacts.shared.model.Business;
  */
 public interface BusinessData extends ContactSubtypeData<Business>
 {
-	
+
 }
