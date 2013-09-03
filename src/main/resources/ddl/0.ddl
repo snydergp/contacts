@@ -32,6 +32,8 @@ CREATE TABLE contacts_data.address (
 	additional_info VARCHAR(128)
 );
 
+CREATE INDEX contacts_data.address_contact_id ON contacts_data.address (contact_id);
+
 CREATE TABLE contacts_data.phone_number (
 	phone_number_id INT NOT NULL IDENTITY PRIMARY KEY,
 	contact_id INT NOT NULL REFERENCES contacts_data.contact ON DELETE CASCADE,
@@ -39,9 +41,13 @@ CREATE TABLE contacts_data.phone_number (
 	number VARCHAR(15) -- http://en.wikipedia.org/wiki/E.164
 );
 
+CREATE INDEX contacts_data.phone_number_contact_id ON contacts_data.phone_number (contact_id);
+
 CREATE TABLE contacts_data.email (
 	email_id INT NOT NULL IDENTITY PRIMARY KEY,
 	contact_id INT NOT NULL REFERENCES contacts_data.contact ON DELETE CASCADE,
 	email_type VARCHAR(32),
 	email VARCHAR(1024)
 );
+
+CREATE INDEX contacts_data.email_contact_id ON contacts_data.email (contact_id);
