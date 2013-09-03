@@ -18,9 +18,9 @@ public interface EmailData
 
 	List<EmailAddress> getEmailAddressesForContactId(DSLContext context, int contactId);
 
-	void insertEmailAddressesForContactId(DSLContext context, int contactId, 
-		List<EmailAddress> addresses);
+	void insertEmailAddressesForContactId(DSLContext context, int contactId,
+	    List<EmailAddress> addresses);
 
 	void clearEmailAddressesForContactId(DSLContext context, int contactId);
-	
+
 }

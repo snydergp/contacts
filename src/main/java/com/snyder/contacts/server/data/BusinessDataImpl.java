@@ -17,56 +17,54 @@ import com.snyder.contacts.shared.model.Contact;
  */
 public class BusinessDataImpl implements BusinessData
 {
-	
-	private static final org.jooq.h2.generated.tables.Business BUSINESS = 
-		org.jooq.h2.generated.tables.Business.BUSINESS;
+
+	private static final org.jooq.h2.generated.tables.Business BUSINESS =
+	    org.jooq.h2.generated.tables.Business.BUSINESS;
 	private static final Field<Integer> CONTACT_ID = BUSINESS.CONTACT_ID;
 	private static final Field<String> NAME = BUSINESS.NAME;
 
-    @Override
-    public boolean isSubtypeInstance(Contact contact)
-    {
-        return contact instanceof Business;
-    }
+	@Override
+	public boolean isSubtypeInstance(Contact contact)
+	{
+		return contact instanceof Business;
+	}
 
-    @Override
-    public void insertSubtype(DSLContext context, Contact contact)
-    {
-        if(!isSubtypeInstance(contact))
-        {
-            throw new IllegalArgumentException();
-        }
-        
-        Business business = (Business) contact;
-        
-        context.insertInto(BUSINESS, CONTACT_ID, NAME)
-            .values(business.getId(), business.getName())
-            .execute();
-    }
+	@Override
+	public void insertSubtype(DSLContext context, Contact contact)
+	{
+		if (!isSubtypeInstance(contact))
+		{
+			throw new IllegalArgumentException();
+		}
 
-    @Override
-    public Business getSubtype(DSLContext context, int contactId)
-    {
-        BusinessRecord record = context.selectFrom(BUSINESS)
-            .where(CONTACT_ID.equal(contactId))
-            .fetchAny();
-        
-        if(record == null)
-        {
-            return null;
-        }
-        
-        BusinessImpl business = new BusinessImpl();
-        business.setId(record.getContactId());
-        business.setName(record.getName());
-        
-        return business;
-    }
+		Business business = (Business) contact;
 
-    @Override
-    public void deleteSubtype(DSLContext context, int contactId)
-    {
-        context.delete(BUSINESS).where(CONTACT_ID.equal(contactId)).execute();
-    }
+		context.insertInto(BUSINESS, CONTACT_ID, NAME).values(business.getId(), business.getName())
+		    .execute();
+	}
+
+	@Override
+	public Business getSubtype(DSLContext context, int contactId)
+	{
+		BusinessRecord record =
+		    context.selectFrom(BUSINESS).where(CONTACT_ID.equal(contactId)).fetchAny();
+
+		if (record == null)
+		{
+			return null;
+		}
+
+		BusinessImpl business = new BusinessImpl();
+		business.setId(record.getContactId());
+		business.setName(record.getName());
+
+		return business;
+	}
+
+	@Override
+	public void deleteSubtype(DSLContext context, int contactId)
+	{
+		context.delete(BUSINESS).where(CONTACT_ID.equal(contactId)).execute();
+	}
 
 }

@@ -11,7 +11,7 @@ public interface EmailAddress
 {
 
 	String getType();
-	
+
 	String getEmail();
-	
+
 }

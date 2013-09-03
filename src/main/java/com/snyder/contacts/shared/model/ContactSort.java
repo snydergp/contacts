@@ -10,7 +10,6 @@ package com.snyder.contacts.shared.model;
 public enum ContactSort
 {
 
-	FIRST_NAME,
-	LAST_NAME
-	
+	FIRST_NAME, LAST_NAME
+
 }

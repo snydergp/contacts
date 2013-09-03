@@ -25,199 +25,198 @@ import com.snyder.state.nonnull.NonNullState;
 import com.snyder.state.store.BaseStore;
 import com.snyder.state.util.Mapping;
 
-
 public class MainViewModelImpl implements MainViewModel
 {
-    
-    private final ContactServer server;
-    private final BaseStore<ContactSummary, Integer> store = 
-        new BaseStore<ContactSummary, Integer>(new IdMapping());
-    private final ContactListingViewModel listingViewModel;
-    private Contact loadedContact;
-    private final MutableNonNullState<DisplayMode> displayMode = 
-        new BaseMutableNonNullState<DisplayMode>(DisplayMode.NONE);
-    private final MutableState<DialogViewModel> dialogState = 
-        new BaseMutableState<DialogViewModel>();
-    
-    private EditContactViewModelImpl currentEdit;
 
-    public MainViewModelImpl(ContactServer server)
-    {
-        this.server = server;
-        this.listingViewModel = new ContactListingViewModelImpl(store, new ContactSelectionImpl());
-    }
+	private final ContactServer server;
+	private final BaseStore<ContactSummary, Integer> store =
+	    new BaseStore<ContactSummary, Integer>(new IdMapping());
+	private final ContactListingViewModel listingViewModel;
+	private Contact loadedContact;
+	private final MutableNonNullState<DisplayMode> displayMode =
+	    new BaseMutableNonNullState<DisplayMode>(DisplayMode.NONE);
+	private final MutableState<DialogViewModel> dialogState =
+	    new BaseMutableState<DialogViewModel>();
 
-    @Override
-    public ContactListingViewModel getListingViewModel()
-    {
-        return listingViewModel;
-    }
+	private EditContactViewModelImpl currentEdit;
 
-    @Override
-    public DisplayContactViewModel getDisplayViewModel()
-    {
-        return new DisplayContactViewModelImpl();
-    }
+	public MainViewModelImpl(ContactServer server)
+	{
+		this.server = server;
+		this.listingViewModel = new ContactListingViewModelImpl(store, new ContactSelectionImpl());
+	}
 
-    @Override
-    public EditContactViewModel getEditViewModel()
-    {
-        return new EditContactViewModelImpl();
-    }
+	@Override
+	public ContactListingViewModel getListingViewModel()
+	{
+		return listingViewModel;
+	}
 
-    @Override
-    public NonNullState<DisplayMode> getDisplayMode()
-    {
-        return displayMode;
-    }
-    
-    @Override
-    public State<DialogViewModel> getDialogState()
-    {
-        return dialogState;
-    }
+	@Override
+	public DisplayContactViewModel getDisplayViewModel()
+	{
+		return new DisplayContactViewModelImpl();
+	}
 
-    private class DisplayContactViewModelImpl implements DisplayContactViewModel
-    {
+	@Override
+	public EditContactViewModel getEditViewModel()
+	{
+		return new EditContactViewModelImpl();
+	}
 
-        @Override
-        public Contact getDisplayedContact()
-        {
-            return loadedContact;
-        }
+	@Override
+	public NonNullState<DisplayMode> getDisplayMode()
+	{
+		return displayMode;
+	}
 
-        @Override
-        public void edit()
-        {
-            displayMode.set(DisplayMode.EDIT);
-        }
-        
-    }
-    
-    private class EditContactViewModelImpl implements EditContactViewModel
-    {
-        
-        private final ModifiableContact modifiableContact;
-        private final ModificationManager modManager;
-        
-        public EditContactViewModelImpl()
-        {
-            modManager = new ModificationManager();
-            modifiableContact = new ModifiableContact(loadedContact, modManager);
-        }
+	@Override
+	public State<DialogViewModel> getDialogState()
+	{
+		return dialogState;
+	}
 
-        @Override
-        public ModifiableContact getContact()
-        {
-            return modifiableContact;
-        }
+	private class DisplayContactViewModelImpl implements DisplayContactViewModel
+	{
 
-        @Override
-        public UndoControls getUndoControls()
-        {
-            return modManager;
-        }
+		@Override
+		public Contact getDisplayedContact()
+		{
+			return loadedContact;
+		}
 
-        @Override
-        public void save(ErrorHandler<InvalidContactException> onFailure)
-        {
-            if(modifiableContact.getValidator().isValidState().get())
-            {
-                Contact toSave = modifiableContact.getModified();
-                if(toSave.getId() == Contact.NEW_CONTACT_ID)
-                {
-                    server.createContact(toSave, new CreateContactCallback(toSave), onFailure);
-                }
-                else
-                {
-                    server.updateContact(toSave, new UpdateContactCallback(toSave), onFailure);
-                }
-            }
-        }
+		@Override
+		public void edit()
+		{
+			displayMode.set(DisplayMode.EDIT);
+		}
 
-        @Override
-        public void cancel()
-        {
-            displayMode.set(DisplayMode.DISPLAY);
-        }
-        
-    }
-    
-    private class CreateContactCallback implements Callback<Integer>
-    {
-        
-        private final Contact saved;
-        
-        public CreateContactCallback(Contact saved)
-        {
-            this.saved = saved;
-        }
+	}
 
-        @Override
-        public void onSuccess(Integer value)
-        {
-            ((ContactImpl) saved).setId(value); 
-            loadedContact = saved;
-            displayMode.set(DisplayMode.DISPLAY);
-            store.add(ContactSummaryImpl.fromContact(saved));
-        }
-        
-    }
-    
-    private class UpdateContactCallback implements Callback<Void>
-    {
-        
-        private final Contact saved;
-        
-        public UpdateContactCallback(Contact saved)
-        {
-            this.saved = saved;
-        }
+	private class EditContactViewModelImpl implements EditContactViewModel
+	{
 
-        @Override
-        public void onSuccess(Void value)
-        {
-            loadedContact = saved;
-            displayMode.set(DisplayMode.DISPLAY);
-        }
-        
-    }
-    
-    private class ContactSelectionImpl implements ContactSelection
-    {
-        
-        private final MutableState<Integer> selectedId = new BaseMutableState<Integer>();
+		private final ModifiableContact modifiableContact;
+		private final ModificationManager modManager;
 
-        @Override
-        public void displayContact(int contactId)
-        {
-            if(currentEdit != null && currentEdit.modifiableContact.getIsModifiedState().get())
-            {
-                //TODO display dialog
-            }
-            else
-            {
-                // TODO load contact
-            }
-        }
+		public EditContactViewModelImpl()
+		{
+			modManager = new ModificationManager();
+			modifiableContact = new ModifiableContact(loadedContact, modManager);
+		}
 
-        @Override
-        public State<Integer> getSelectedContactId()
-        {
-            return selectedId;
-        }
-        
-    }
-    
-    private class IdMapping implements Mapping<ContactSummary, Integer>
-    {
+		@Override
+		public ModifiableContact getContact()
+		{
+			return modifiableContact;
+		}
 
-        @Override
-        public Integer map(ContactSummary t)
-        {
-            return t.getId();
-        }
-        
-    }
-    
+		@Override
+		public UndoControls getUndoControls()
+		{
+			return modManager;
+		}
+
+		@Override
+		public void save(ErrorHandler<InvalidContactException> onFailure)
+		{
+			if (modifiableContact.getValidator().isValidState().get())
+			{
+				Contact toSave = modifiableContact.getModified();
+				if (toSave.getId() == Contact.NEW_CONTACT_ID)
+				{
+					server.createContact(toSave, new CreateContactCallback(toSave), onFailure);
+				}
+				else
+				{
+					server.updateContact(toSave, new UpdateContactCallback(toSave), onFailure);
+				}
+			}
+		}
+
+		@Override
+		public void cancel()
+		{
+			displayMode.set(DisplayMode.DISPLAY);
+		}
+
+	}
+
+	private class CreateContactCallback implements Callback<Integer>
+	{
+
+		private final Contact saved;
+
+		public CreateContactCallback(Contact saved)
+		{
+			this.saved = saved;
+		}
+
+		@Override
+		public void onSuccess(Integer value)
+		{
+			((ContactImpl) saved).setId(value);
+			loadedContact = saved;
+			displayMode.set(DisplayMode.DISPLAY);
+			store.add(ContactSummaryImpl.fromContact(saved));
+		}
+
+	}
+
+	private class UpdateContactCallback implements Callback<Void>
+	{
+
+		private final Contact saved;
+
+		public UpdateContactCallback(Contact saved)
+		{
+			this.saved = saved;
+		}
+
+		@Override
+		public void onSuccess(Void value)
+		{
+			loadedContact = saved;
+			displayMode.set(DisplayMode.DISPLAY);
+		}
+
+	}
+
+	private class ContactSelectionImpl implements ContactSelection
+	{
+
+		private final MutableState<Integer> selectedId = new BaseMutableState<Integer>();
+
+		@Override
+		public void displayContact(int contactId)
+		{
+			if (currentEdit != null && currentEdit.modifiableContact.getIsModifiedState().get())
+			{
+				// TODO display dialog
+			}
+			else
+			{
+				// TODO load contact
+			}
+		}
+
+		@Override
+		public State<Integer> getSelectedContactId()
+		{
+			return selectedId;
+		}
+
+	}
+
+	private class IdMapping implements Mapping<ContactSummary, Integer>
+	{
+
+		@Override
+		public Integer map(ContactSummary t)
+		{
+			return t.getId();
+		}
+
+	}
+
 }

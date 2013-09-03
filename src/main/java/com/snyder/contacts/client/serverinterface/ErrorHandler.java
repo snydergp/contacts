@@ -9,7 +9,7 @@ package com.snyder.contacts.client.serverinterface;
  */
 public interface ErrorHandler<T extends Throwable>
 {
-	
+
 	void onFailure(T thowable);
-	
+
 }

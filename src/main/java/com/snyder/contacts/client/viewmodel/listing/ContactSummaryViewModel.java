@@ -14,9 +14,9 @@ public interface ContactSummaryViewModel
 {
 
 	ContactSummary getSummary();
-	
+
 	State<Boolean> isSelected();
-	
+
 	void view();
-	
+
 }

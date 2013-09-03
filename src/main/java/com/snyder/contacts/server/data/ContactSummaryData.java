@@ -6,10 +6,9 @@ import org.jooq.DSLContext;
 
 import com.snyder.contacts.shared.model.ContactSummary;
 
-
 public interface ContactSummaryData
 {
-    
-    List<ContactSummary> getContacts(DSLContext context);
-    
+
+	List<ContactSummary> getContacts(DSLContext context);
+
 }

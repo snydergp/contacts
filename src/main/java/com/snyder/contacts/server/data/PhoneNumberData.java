@@ -17,10 +17,10 @@ public interface PhoneNumberData
 {
 
 	List<PhoneNumber> getPhoneNumbersForContact(DSLContext context, int contactId);
-	
-	void insertPhoneNumbersForContact(DSLContext context, int contactId, 
-		List<PhoneNumber> phoneNumbers);
-	
+
+	void insertPhoneNumbersForContact(DSLContext context, int contactId,
+	    List<PhoneNumber> phoneNumbers);
+
 	void clearPhoneNumbersForContact(DSLContext context, int contactId);
-	
+
 }
