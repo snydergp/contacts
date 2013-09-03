@@ -39,7 +39,7 @@ CREATE TABLE contacts_data.phone_number (
 	contact_id INT NOT NULL REFERENCES contacts_data.contact ON DELETE CASCADE,
 	phone_type VARCHAR(32),
 	number VARCHAR(15) -- http://en.wikipedia.org/wiki/E.164
-);
+); 
 
 CREATE INDEX contacts_data.phone_number_contact_id ON contacts_data.phone_number (contact_id);
 
